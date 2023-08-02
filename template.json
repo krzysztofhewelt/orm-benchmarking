@@ -1,0 +1,19 @@
+[
+  {
+    "orm_name": "NAME",
+    "orm_version": "VERSION",
+    "num_of_rows": "NUM",
+    "benchmarks": [
+      {
+        "name_of_test": "ABC",
+        "time": "TIME",
+        "memory": "MEM",
+        "queries": [
+          "QUERY 1",
+          "QUERY 2",
+          "..."
+        ]
+      }
+    ]
+  }
+]
