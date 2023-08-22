@@ -1,19 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Course;
-use App\Teacher;
-use App\User;
-use App\Student;
+use App\Models\Teacher;
+use App\Models\User;
+use App\Models\Student;
 use Faker\Factory;
-use Illuminate\Database\Seeder;
+use Faker\Generator;
 
 class UsersSeeder
 {
-    protected $faker;
+    protected Generator $faker;
 
-    public function run(int $usersCount)
+    public function run(int $usersCount) : void
     {
         $this->faker = Factory::create('pl_PL');
 
@@ -43,7 +43,8 @@ class UsersSeeder
                     'surname' => $this->faker->lastName,
                     'email' => $this->faker->unique()->safeEmail,
                     'account_role' => 'teacher',
-                    'password' => 'User#12345'
+                    'password' => 'User#12345',
+                    'active' => 1
                 ]);
 
             Teacher::create([
@@ -71,7 +72,8 @@ class UsersSeeder
                     'surname' => $this->faker->lastName,
                     'email' => $this->faker->unique()->safeEmail,
                     'account_role' => 'student',
-                    'password' => 'User#12345'
+                    'password' => 'User#12345',
+                    'active' => 1
                 ]);
 
             $year = $this->faker->numberBetween(2018, 2022);

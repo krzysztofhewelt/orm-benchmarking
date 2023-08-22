@@ -2,7 +2,8 @@
 
 require "bootstrap.php";
 
-use App\User;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class Benchmark
@@ -10,8 +11,10 @@ class Benchmark
     public $startMem;
     public function __construct()
     {
-        $this->run('test1', 50);
-        $this->run('test2', 50);
+        //new DatabaseSeeder(1000);
+        $this->run('test1', 100);
+        $this->run('test2', 100);
+        $this->run('test3', 1);
     }
 
     public function run($method, $times) {
@@ -24,7 +27,7 @@ class Benchmark
             $tempTimes[] = microtime(true) - $start;
         }
 
-        echo "\navg time: " . (array_sum($tempTimes) / count($tempTimes)) * 1000;
+        echo "\navg time of {$method}: " . (array_sum($tempTimes) / count($tempTimes)) * 1000;
     }
 
     /**
@@ -48,12 +51,16 @@ class Benchmark
     /*
      * Runs complex select query with nested relations
      */
-
+    public function test3() {
+        return User::with('courses.tasks')->get();
+    }
 
     /*
      * Inserts some users
      */
+    public function test4() {
 
+    }
 
     /*
      * Assigns users to courses

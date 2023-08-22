@@ -11,7 +11,7 @@ $capsule->addConnection([
     "host" => "localhost",
     "database" => "orm_benchmarking",
     "username" => "postgres",
-    "password" => "admin123"
+    "password" => "superpassword"
 ]);
 
 $capsule->setAsGlobal();

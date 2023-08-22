@@ -43,6 +43,7 @@ const users = User.findAll({
         }
     }
 }).then((response) => {
+    console.log(response);
     //console.log(response); // true
     //console.log("All users:", JSON.stringify(users, null, 2));
 })

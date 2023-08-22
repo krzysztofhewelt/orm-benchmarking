@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,15 +14,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Student extends Model
 {
-	use HasFactory;
-
 	protected $table = 'student_info';
 	protected $primaryKey = 'user_ID';
 	public $timestamps = false;
 	protected $guarded = [];
 	protected $hidden = ['pivot'];
 
-	public function user(): BelongsTo
+	public function user() : BelongsTo
 	{
 		return $this->belongsTo(User::class, 'user_ID', 'id');
 	}

@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Schema\Blueprint;
-use \MyProject\Database\Migration\Migration;
+use Database\Migrations\Migration;
 
 final class CreateTasksTable extends Migration
 {
-    public function up()
+    public function up() : void
     {
         $this->schema->create('tasks', function (Blueprint $table) {
             $table
@@ -27,12 +27,7 @@ final class CreateTasksTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down() : void
     {
         $this->schema->dropIfExists('tasks');
     }

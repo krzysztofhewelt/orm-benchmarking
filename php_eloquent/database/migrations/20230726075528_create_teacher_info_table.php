@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Schema\Blueprint;
-use \MyProject\Database\Migration\Migration;
+use Database\Migrations\Migration;
 
 final class CreateTeacherInfoTable extends Migration
 {
-    public function up()
+    public function up() : void
     {
         $this->schema->create('teacher_info', function (Blueprint $table) {
             $table->unsignedBigInteger('user_ID')->primary();
@@ -23,12 +23,7 @@ final class CreateTeacherInfoTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down() : void
     {
         $this->schema->dropIfExists('teacher_info');
     }

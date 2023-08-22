@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require "Migration.php";
-
 use Illuminate\Database\Schema\Blueprint;
-use MyProject\Database\Migration\Migration;
+use Database\Migrations\Migration;
 
-final class CreateUsersTable extends Migration
+class CreateUsersTable extends Migration
 {
-    public function up() {
+    public function up() : void
+    {
         $this->schema->create('users', function (Blueprint $table) {
             $table
                 ->id()
@@ -23,7 +22,8 @@ final class CreateUsersTable extends Migration
         });
     }
 
-    public function down() {
+    public function down() : void
+    {
         $this->schema->dropIfExists('users');
     }
 }

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use \MyProject\Database\Migration\Migration;
+use Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 final class CreateCourseEnrollmentsTable extends Migration
 {
-    public function up()
+    public function up() : void
     {
         $this->schema->create('course_enrollments', function (Blueprint $table) {
             $table
@@ -28,7 +28,7 @@ final class CreateCourseEnrollmentsTable extends Migration
         });
     }
 
-    public function down()
+    public function down() : void
     {
         $this->schema->dropIfExists('course_enrollments');
     }

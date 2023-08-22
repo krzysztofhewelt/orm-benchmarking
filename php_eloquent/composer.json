@@ -7,9 +7,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\Models": "models/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
+            "App\\Models\\": "models/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Database\\Migrations\\": "database/migrations/"
+        },
+        "files": ["bootstrap.php"]
     }
 }

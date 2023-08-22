@@ -1,53 +1,36 @@
 <?php
+declare(strict_types=1);
 
-require "../../bootstrap.php";
+namespace Database\Seeders;
 
-use App\User;
-use Database\Seeders\UsersSeeder;
-use Illuminate\Database\Capsule\Manager as DB;
+require_once "../../bootstrap.php";
 
-class DatabaseSeeder extends \Illuminate\Database\Seeder
+class DatabaseSeeder
 {
     public function __construct(int $usersCount)
     {
-        $this->cleanupDatabase();
-
-        $this->migrate();
-
         echo "Database seeding! Please wait!\n";
 
         $time = microtime(true);
         $this->seedDatabase($usersCount);
 
-        echo "Database seeded! Took " . Utils::formatTime(microtime(true) - $time) . " minutes.";
+        echo "Database seeded! Took " . microtime(true) - $time . " minutes.";
     }
 
-    protected function migrate() {
-
-    }
-
-    protected function seedDatabase(int $usersCount)
+    protected function seedDatabase(int $usersCount) : void
     {
-       // $faker = Factory::create('pl_PL');
-
-       /* for ($i = 0; $i < $usersCount; $i++)
-            User::create([
-                "name" => $faker->firstName(),
-                "surname" => $faker->lastName(),
-                "email" => $faker->unique()->email(),
-                "password" => $faker->password(8),
-                "account_role" => "student"
-            ]);*/
-
-        // for dla drugiej tabeli
-
-        // for dla trzeciej tabeli
+        // users
         $users = new UsersSeeder();
-        $users->run(1000);
-        DB::enableQueryLog();
-        echo (new User())->where('id', '10')->with('courses.tasks')->get();
-        print_r(DB::getQueryLog());
+        $users->run($usersCount);
+
+        // courses and users assign
+        $courses = new CoursesSeeder();
+        $courses->run((int) floor($usersCount * 0.05));
+
+        // tasks for courses
+        $tasks = new TasksSeeder();
+        $tasks->run((int) floor($usersCount * 0.05));
     }
 }
 
-$dbSeeder = new DatabaseSeeder(1000);
+new DatabaseSeeder(1000);
