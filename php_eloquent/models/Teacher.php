@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Teacher extends Model
 {
 	protected $table = 'teacher_info';
-	protected $primaryKey = 'user_ID';
+	protected $primaryKey = 'user_id';
 	public $timestamps = false;
 	protected $hidden = ['pivot'];
 
@@ -23,6 +23,6 @@ class Teacher extends Model
 
 	public function user() : BelongsTo
 	{
-		return $this->belongsTo(User::class, 'user_ID', 'id');
+		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 }

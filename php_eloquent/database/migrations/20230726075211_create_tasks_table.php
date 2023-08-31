@@ -18,9 +18,9 @@ final class CreateTasksTable extends Migration
             $table->dateTime('available_from');
             $table->dateTime('available_to')->nullable();
             $table->float('max_points');
-            $table->unsignedBigInteger('course_ID');
+            $table->unsignedBigInteger('course_id');
             $table
-                ->foreign('course_ID')
+                ->foreign('course_id')
                 ->references('id')
                 ->on('courses')
                 ->onDelete('cascade');

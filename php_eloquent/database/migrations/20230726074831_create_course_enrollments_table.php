@@ -13,15 +13,15 @@ final class CreateCourseEnrollmentsTable extends Migration
                 ->id()
                 ->autoIncrement()
                 ->index();
-            $table->unsignedBigInteger('user_ID');
-            $table->unsignedBigInteger('course_ID');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('course_id');
             $table
-                ->foreign('user_ID')
+                ->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
             $table
-                ->foreign('course_ID')
+                ->foreign('course_id')
                 ->references('id')
                 ->on('courses')
                 ->onDelete('cascade');

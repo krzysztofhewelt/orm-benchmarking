@@ -24,13 +24,13 @@ class Course extends Model
 
 	public function users() : BelongsToMany
 	{
-		return $this->belongsToMany(User::class, 'course_enrollments', 'course_ID', 'user_ID')
+		return $this->belongsToMany(User::class, 'course_enrollments', 'course_id', 'user_id')
 			->orderByDesc('account_role')
 			->orderBy('surname');
 	}
 
 	public function tasks() : HasMany
 	{
-		return $this->hasMany(Task::class, 'course_ID', 'id');
+		return $this->hasMany(Task::class, 'course_id', 'id');
 	}
 }

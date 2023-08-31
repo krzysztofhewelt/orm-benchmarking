@@ -28,7 +28,7 @@ module.exports.Task = database.define('Task', {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    course_ID: {
+    course_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
     },

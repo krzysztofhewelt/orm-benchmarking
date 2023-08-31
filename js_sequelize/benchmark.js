@@ -9,10 +9,10 @@ let benchmarks = [];
 // test-cases functions
 const test1 = async () => {
     return await User.findAll({
-        include: [Student],
+        include: [Course],
         where: {
-            account_role: {
-                [Op.eq]: "student"
+            id: {
+                [Op.eq]: 315
             }
         }
     });
@@ -32,7 +32,7 @@ const run = async (benchmark, times = NUMBER_OF_REPEATS) => {
     const avgTime = +(tempTimes.reduce((sum, el) => sum + el, 0) / times).toFixed(2);
     addBenchmark(benchmark.name, avgTime, lastBenchmarkQueries);
 
-    console.log("AVG time of benchmark " + benchmark.name + ": " + avgTime + "ms");
+    console.log("AVG time of benchmark " + benchmark.name + ": " + avgTime + " ms.");
 };
 
 const addBenchmark = (benchmark, avgTime, queries) => {

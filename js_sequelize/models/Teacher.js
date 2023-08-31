@@ -2,7 +2,7 @@ const {database} = require("../database");
 const {DataTypes} = require('sequelize');
 
 module.exports.Teacher = database.define('Teacher', {
-    user_ID: {
+    user_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
     },

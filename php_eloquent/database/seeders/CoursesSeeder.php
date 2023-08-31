@@ -18,7 +18,7 @@ class CoursesSeeder
 
         Course::truncate();
 
-        $studentIds = Student::all()->pluck('user_ID')->toArray();
+        $studentIds = Student::all()->pluck('user_id')->toArray();
 
         for($i = 1; $i <= $coursesCount; $i++) {
             $course = Course::create([

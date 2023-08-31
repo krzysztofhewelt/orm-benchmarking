@@ -15,13 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Student extends Model
 {
 	protected $table = 'student_info';
-	protected $primaryKey = 'user_ID';
+	protected $primaryKey = 'user_id';
 	public $timestamps = false;
 	protected $guarded = [];
 	protected $hidden = ['pivot'];
 
 	public function user() : BelongsTo
 	{
-		return $this->belongsTo(User::class, 'user_ID', 'id');
+		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 }

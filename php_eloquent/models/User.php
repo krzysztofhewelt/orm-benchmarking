@@ -22,24 +22,18 @@ class User extends Model
 
 	protected $hidden = ['password', 'pivot'];
 
-	protected $casts = [
-		'email_verified_at' => 'datetime',
-		'last_success_login' => 'datetime',
-		'last_wrong_login' => 'datetime',
-	];
-
 	public function courses() : BelongsToMany
 	{
-		return $this->belongsToMany(Course::class, 'course_enrollments', 'user_ID', 'course_ID');
+		return $this->belongsToMany(Course::class, 'course_enrollments', 'user_id', 'course_id');
 	}
 
 	public function student() : HasMany
 	{
-		return $this->hasMany(Student::class, 'user_ID', 'id');
+		return $this->hasMany(Student::class, 'user_id', 'id');
 	}
 
 	public function teacher() : HasOne
 	{
-		return $this->hasOne(Teacher::class, 'user_ID', 'id');
+		return $this->hasOne(Teacher::class, 'user_id', 'id');
 	}
 }

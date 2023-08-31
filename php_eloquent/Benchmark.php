@@ -80,9 +80,9 @@ class Benchmark
      * @param $times
      * @return void
      */
-    public function test1()
+    public function test1() : mixed
     {
-        return User::where('account_role', 'student')->with('student')->first();
+        return User::where('account_role', 'student')->with('student', 'teacher', 'courses')->first();
     }
 
     /*

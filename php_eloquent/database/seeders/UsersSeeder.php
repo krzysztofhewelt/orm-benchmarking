@@ -48,7 +48,7 @@ class UsersSeeder
                 ]);
 
             Teacher::create([
-                    'user_ID' => $user->id,
+                    'user_id' => $user->id,
                     'scien_degree' => $this->faker->randomElement([
                         'dr',
                         'mgr',
@@ -79,7 +79,7 @@ class UsersSeeder
             $year = $this->faker->numberBetween(2018, 2022);
 
             Student::create([
-                'user_ID' => $user->id,
+                'user_id' => $user->id,
                 'field_of_study' => $this->faker->randomElement([
                     'Computer Science',
                     'Electronics and telecommunication',

@@ -20,6 +20,6 @@ class Task extends Model
 
 	public function course() : BelongsTo
 	{
-		return $this->belongsTo(Course::class, 'course_ID', 'id');
+		return $this->belongsTo(Course::class, 'course_id', 'id');
 	}
 }
