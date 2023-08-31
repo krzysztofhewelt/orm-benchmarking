@@ -60,7 +60,6 @@ class Benchmark
     /*
      * Runs complex select query with nested relations
      */
-
     public function saveResultsData(): bool
     {
         return ResultsManager::saveResultToFile(
