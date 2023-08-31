@@ -1,4 +1,4 @@
-# ORM Benchmarking (in developement)
+# ORM Benchmarking (in development)
 
 ORM's:
 * Eloquent (PHP),
