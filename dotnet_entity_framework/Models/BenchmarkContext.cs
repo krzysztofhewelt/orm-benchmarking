@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace dotnet_entity_framework.Models;
@@ -17,7 +18,18 @@ public class BenchmarkContext : DbContext
                 "Host=localhost;Database=orm_benchmarking;Username=postgres;Password=superpassword"
             )
             .UseSnakeCaseNamingConvention()
-            .LogTo(Console.WriteLine, LogLevel.Information);
+            .LogTo(message =>
+            {
+                if (message.Contains("CommandExecuted"))
+                {
+                    var messageSplitted = message.Split(Environment.NewLine);
+                    string messageJoined = string.Join(" ", messageSplitted.Skip(2));
+                    string messageTrimmed = Regex.Replace(messageJoined, @"\s{2,}", " ");
+                    
+                    Benchmark.lastQuery = messageTrimmed;
+                }
+            }, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
