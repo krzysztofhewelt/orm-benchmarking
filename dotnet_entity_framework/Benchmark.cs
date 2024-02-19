@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
-using dotnet_entity_framework.Models;
+using dotnet_entity_framework.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_entity_framework;

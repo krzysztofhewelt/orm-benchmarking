@@ -1,5 +1,5 @@
 const {Op} = require('sequelize');
-const {User, Student, Course, Task, Teacher} = require("./models");
+const {User, Student, Course, Task, Teacher} = require("./Entities");
 const {database, lastBenchmarkQueries} = require("./database");
 
 // benchmark results var and constant

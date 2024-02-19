@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace dotnet_entity_framework.Models;
+namespace dotnet_entity_framework.Entities;
 
 [Table("tasks")]
 public class Task

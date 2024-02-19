@@ -1,18 +1,24 @@
 <?php
 
-return [
-    'paths' => [
-        'migrations' => 'database\migrations'
-    ],
-    'environments' => [
-        'default_migration_table' => 'migrations',
-        'dev' => [
-            'adapter' => 'pgsql',
-            'host' => 'localhost',
-            'name' => 'orm_benchmarking',
-            'user' => 'postgres',
-            'pass' => 'superpassword',
-            'port' => '5432'
+try {
+    $dbCredentials = dbCredentialsLoader();
+
+    return [
+        'paths' => [
+            'migrations' => 'Database\Migrations'
+        ],
+        'environments' => [
+            'default_migration_table' => 'migrations',
+            'dev' => [
+                'adapter' => $dbCredentials['driver'],
+                'host' => $dbCredentials['host'],
+                'port' => $dbCredentials['port'],
+                'name' => $dbCredentials['database'],
+                'user' => $dbCredentials['username'],
+                'pass' => $dbCredentials['password']
+            ]
         ]
-    ]
-];
+    ];
+} catch (ErrorException $e) {
+    echo $e;
+}

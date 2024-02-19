@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Teacher;
-use App\Models\User;
-use App\Models\Student;
+use App\Entities\Teacher;
+use App\Entities\User;
+use App\Entities\Student;
 use Faker\Factory;
 use Faker\Generator;
 

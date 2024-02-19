@@ -1,8 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Data.Common;
+using System.Text.RegularExpressions;
+using dotnet_entity_framework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Task = System.Threading.Tasks.Task;
 
-namespace dotnet_entity_framework.Models;
+namespace dotnet_entity_framework;
 
 public class BenchmarkContext : DbContext
 {
@@ -10,12 +13,14 @@ public class BenchmarkContext : DbContext
     public DbSet<Teacher> Teacher { get; set; }
     public DbSet<Student> Student { get; set; }
     public DbSet<Course> Courses { get; set; }
-    public DbSet<Task> Tasks { get; set; }
+    public DbSet<dotnet_entity_framework.Entities.Task> Tasks { get; set; }
+
+    private DbCredentials dbCredentials = (new DbCredentialsLoader()).LoadDbCredentials(); 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder
             .UseNpgsql(
-                "Host=localhost;Database=orm_benchmarking;Username=postgres;Password=superpassword"
+                string.Format("Host={0};Port={1};Database={2};Username={3};Password={4}", dbCredentials.host, dbCredentials.port, dbCredentials.database, dbCredentials.username, dbCredentials.password)
             )
             .UseSnakeCaseNamingConvention()
             .LogTo(message =>

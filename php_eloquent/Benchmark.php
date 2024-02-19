@@ -4,12 +4,13 @@ declare(strict_types=1);
 require "bootstrap.php";
 require "../ResultsManager.php";
 
-use App\Models\User;
+use App\Entities\User;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class Benchmark
 {
     const NUMBER_OF_REPEATS = 100;
+    const NUMBER_OF_RECORDS = [1, 100, 1000, 5000];
     public array $benchmarks;
 
     public function __construct()
@@ -29,20 +30,28 @@ class Benchmark
             $tempTimes[] = microtime(true) - $start;
         }
 
+        $avgTime = (array_sum($tempTimes) / count($tempTimes)) * 1000;
+        $minTime = min($tempTimes) * 1000;
+        $maxTime = max($tempTimes) * 1000;
+
         $this->addBenchmark(
             $method,
-            (array_sum($tempTimes) / count($tempTimes)) * 1000,
+            $avgTime,
+            $minTime,
+            $maxTime,
             $this->getQueries($method)
         );
 
-        echo "\navg time of $method: " . (array_sum($tempTimes) / count($tempTimes)) * 1000;
+        echo sprintf("\navg time of %s: %f; min=%f, max=%f", $method, $avgTime, $minTime, $maxTime);
     }
 
-    public function addBenchmark(string $name, float|int $time, array $queries): void
+    public function addBenchmark(string $name, float|int $time, float|int $minTime, float|int $maxTime, array $queries): void
     {
         $this->benchmarks[] = [
             'name' => $name,
             'time' => $time,
+            'min' => $minTime,
+            'max' => $maxTime,
             'queries' => $queries
         ];
     }

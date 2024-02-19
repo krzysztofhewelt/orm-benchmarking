@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Database\Seeders;
+use Database\Seeders\CoursesSeeder;
+use Database\Seeders\TasksSeeder;
+use Database\Seeders\UsersSeeder;
 
-require_once "../../bootstrap.php";
+require "bootstrap.php";
 
 class DatabaseSeeder
 {

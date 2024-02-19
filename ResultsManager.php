@@ -24,7 +24,7 @@ class ResultsManager
             'benchmarks' => $jsonData->benchmarks
         ];
 
-        $jsonFileData = json_decode($fileData);
+        $jsonFileData = json_decode($fileData, true);
         $jsonFileData[] = $result;
 
         return file_put_contents(self::RESULTS_FILE, json_encode($jsonFileData)) !== false;

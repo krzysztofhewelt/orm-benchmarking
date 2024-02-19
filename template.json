@@ -5,7 +5,30 @@
     "benchmarks": [
       {
         "name": "ABC",
-        "time": "TIME",
+        "num_of_records_times": {
+          "100": 12.1,
+          "500": 50.23,
+          "1000": 100.11
+        },
+        "queries": [
+          "QUERY 1",
+          "QUERY 2",
+          "..."
+        ]
+      }
+    ]
+  },
+  {
+    "orm_name": "NAME TWO",
+    "orm_version": "VERSION",
+    "benchmarks": [
+      {
+        "name": "ABC",
+        "num_of_records_times": {
+          "100": 12.1,
+          "500": 50.23,
+          "1000": 100.11
+        },
         "queries": [
           "QUERY 1",
           "QUERY 2",
@@ -15,3 +38,5 @@
     ]
   }
 ]
+
+

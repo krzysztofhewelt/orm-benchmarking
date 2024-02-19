@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ORM benchmarks</title>
+
+  <!-- version 4.4.1 -->
+  <script src="assets/chart.js"></script>
+  <script type="module" src="assets/functionalChart.js"></script>
+  <script src="testEnv.js"></script>
+
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<i>Generated date: xxxxx</i>
+
+<h1>Benchmark report</h1>
+
+<p>GitHub repo: <a href="https://github.com/krzysztofhewelt/orm-benchmarking" target="_blank">https://github.com/krzysztofhewelt/orm-benchmarking</a>
+</p>
+
+<div>
+  <b>Targets:</b>
+  <ul>
+    <li>Eloquent (PHP)</li>
+    <li>Sequelize (JS)</li>
+    <li>Entity Framework (.NET/C#)</li>
+    <li>Hibernate (Java)</li>
+  </ul>
+</div>
+
+<div>
+  <b>Test environment:</b> <br>
+  <div id="testEnv"></div>
+</div>
+
+<div>
+  No. of repeated tests: 100
+</div>
+
+<div class="banner">Test 1.</div>
+
+<canvas id="myChart"></canvas>
+
+<script>
+  const testEnvDiv = document.getElementById('testEnv');
+  testEnvDiv.innerHTML = `${testEnv.os}, ${testEnv.cpu}, ${testEnv.ram}, ${testEnv.hdd}`
+
+  const ctx = document.getElementById('myChart');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Arrays.map(<<orm_name>>)
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3], // Arrays.map(<<benchmark_time>>)
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    },
+  });
+</script>
+
+</body>
+</html>

@@ -1,25 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Task
+ * Student
  *
  * @mixin Builder
  */
-class Task extends Model
+class Student extends Model
 {
+	protected $table = 'student_info';
+	protected $primaryKey = 'user_id';
 	public $timestamps = false;
 	protected $guarded = [];
 	protected $hidden = ['pivot'];
 
-	public function course() : BelongsTo
+	public function user() : BelongsTo
 	{
-		return $this->belongsTo(Course::class, 'course_id', 'id');
+		return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 }
