@@ -9,7 +9,7 @@ try {
         ],
         'environments' => [
             'default_migration_table' => 'migrations',
-            'dev' => [
+            'production' => [
                 'adapter' => $dbCredentials['driver'],
                 'host' => $dbCredentials['host'],
                 'port' => $dbCredentials['port'],

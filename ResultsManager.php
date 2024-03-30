@@ -5,11 +5,18 @@ class ResultsManager
 {
     const RESULTS_FILE = __DIR__ . "/results.json";
 
-    public static function saveResultToFile(mixed $jsonData): bool
+    public static function saveResultToFile(mixed $jsonData, bool $override = true): bool
     {
         if (!self::validateBodyData($jsonData)) {
             echo "Given data is not valid!";
             return false;
+        }
+
+        if($override) {
+            if(!unlink(self::RESULTS_FILE)) {
+                echo "Cannot delete results file!";
+                return false;
+            }
         }
 
         if (!file_exists(self::RESULTS_FILE))
@@ -47,10 +54,21 @@ class ResultsManager
         foreach ($jsonData->benchmarks as $benchmark) {
             $benchmark = (object) $benchmark; // clean way to convert assoc array to object (without json_encode(json_decode))
 
-            if ((!property_exists($benchmark, "name") || !is_string($benchmark->name))
-                || (!property_exists($benchmark, "time") || !is_numeric($benchmark->time))
-                || (!property_exists($benchmark, "queries")) || !is_array($benchmark->queries))
+            if ((!property_exists($benchmark, "name") || !is_string($benchmark->name)))
                 return false;
+
+            if ((!property_exists($benchmark, "numberOfRecords") || !is_array($benchmark->numberOfRecords)))
+                return false;
+
+            foreach($benchmark->numberOfRecords as $benchmarkNumberOfRecords) {
+                $benchmarkNumberOfRecords = (object) $benchmarkNumberOfRecords;
+
+                if ((!property_exists($benchmarkNumberOfRecords, "time") || !is_numeric($benchmarkNumberOfRecords->time))
+                    || (!property_exists($benchmarkNumberOfRecords, "min") || !is_numeric($benchmarkNumberOfRecords->min))
+                    || (!property_exists($benchmarkNumberOfRecords, "max") || !is_numeric($benchmarkNumberOfRecords->max))
+                    || (!property_exists($benchmarkNumberOfRecords, "queries") || !is_array($benchmarkNumberOfRecords->queries)))
+                    return false;
+            }
         }
 
         return true;
