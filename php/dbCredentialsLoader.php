@@ -3,7 +3,7 @@
 /**
  * @throws ErrorException
  */
-function dbCredentialsLoader(string $filepath = "../dbCredentials.json"): array
+function dbCredentialsLoader(string $filepath = "../../dbCredentials.json"): array
 {
     if(!file_exists($filepath))
         throw new ErrorException("File does not exists");

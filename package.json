@@ -1,0 +1,17 @@
+{
+  "name": "orm_benchmarking",
+  "version": "1.0.0",
+  "description": "",
+  "main": "testEnv.js",
+  "author": "Krzysztof Hewelt",
+  "dependencies": {
+    "chart.js": "^4.4.2",
+    "chartjs-chart-error-bars": "^4.4.0",
+    "express": "^4.19.2",
+    "json-formatter-js": "^2.5.10",
+    "mariadb": "^3.3.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.2"
+  }
+}

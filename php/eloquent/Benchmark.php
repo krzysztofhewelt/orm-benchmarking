@@ -2,17 +2,17 @@
 declare(strict_types=1);
 
 require "bootstrap.php";
-require "../ResultsManager.php";
+require "../../ResultsManager.php";
+require "BenchmarkUtils.php";
 
-use App\Entities\User;
 use App\Entities\Course;
-use Faker\Factory;
+use App\Entities\User;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class Benchmark
 {
     const NUMBER_OF_REPEATS = 100;
-    const NUMBER_OF_RECORDS = [1, 10];
+    const NUMBER_OF_RECORDS = [1, 50, 100, 1000];
     private array $randomUsers;
 
     /**
@@ -32,15 +32,17 @@ class Benchmark
         $this->run('selectSimpleUsers');
         $this->run('selectComplexUsersWithInformation');
         $this->run('selectComplexUsersTasks');
-        $this->randomUsers = $this->generateRandomUsers(self::NUMBER_OF_RECORDS[count(self::NUMBER_OF_RECORDS)-1]);
+        $this->randomUsers = generateRandomUsers(self::NUMBER_OF_RECORDS[count(self::NUMBER_OF_RECORDS)-1]);
 
-        $this->run('insertUsers', typeOfBenchmark: 'modify');
-        $this->run('insertCourses', typeOfBenchmark: 'modify');
-
-        $this->run('updateUsers', typeOfBenchmark: 'modify');
-        $this->run('updateCourses', typeOfBenchmark: 'modify');
-
-
+        $this->run('insertUsers', typeOfBenchmark: 'create');
+//        $this->run('insertCourses', typeOfBenchmark: 'create');
+//
+//        // only one record to update
+//        $this->run('updateUsers', typeOfBenchmark: 'update');
+//        $this->run('updateCourses', typeOfBenchmark: 'update');
+//
+//        $this->run('deleteUsers', typeOfBenchmark: 'delete');
+//        $this->run('deleteCourses', typeOfBenchmark: 'delete');
 
         $this->saveResultsData();
     }
@@ -52,15 +54,18 @@ class Benchmark
         $benchmarkNumberOfRecords = array();
         foreach($numberOfRecords as $recordsToFetch) {
             $tempTimes = array();
-            $methodArguments = ($typeOfBenchmark === 'update') ? $this->randomUsers : $recordsToFetch;
+//            $methodArguments = ($typeOfBenchmark === 'update') ? $this->randomUsers : $recordsToFetch;
+            $methodArguments = ($typeOfBenchmark === 'create') ? array_slice($this->randomUsers, 0, $recordsToFetch) : $recordsToFetch;
 
             for ($i = 0; $i < $times; $i++) {
                 $start = microtime(true);
                 $this->$method($methodArguments);
                 $tempTimes[] = microtime(true) - $start;
 
-                if($typeOfBenchmark === 'update') {
-                    $this->deleteLastNUsers(10);
+                if($typeOfBenchmark === 'create') {
+                    $this->deleteLastNUsers($recordsToFetch);
+                } elseif ($typeOfBenchmark === 'delete') {
+                    # add n users
                 }
             }
 
@@ -75,7 +80,7 @@ class Benchmark
                 'queries' => $this->getQueries($method, $methodArguments)
             ];
 
-            $this->deleteLastNUsers(10);
+            if($typeOfBenchmark === 'create') $this->deleteLastNUsers($recordsToFetch);
 
             echo sprintf(" - %d: %f; min=%f, max=%f\n", $recordsToFetch, $avgTime, $minTime, $maxTime);
         }
@@ -117,8 +122,8 @@ class Benchmark
     {
         return ResultsManager::saveResultToFile(
             (object)[
-                "orm_name" => "Eloquent",
-                "orm_version" => "11.1.1",
+                "orm_name" => "eloquent",
+                "orm_version" => \Composer\InstalledVersions::getVersion('illuminate/database'),
                 "benchmarks" => $this->benchmarks
             ]);
     }
@@ -138,7 +143,7 @@ class Benchmark
 
     private function selectComplexUsersWithInformation(int $quantity) : mixed
     {
-        return User::with(['teacher', 'student'])->limit($quantity)->get();
+        return User::where('account_role', '=', 'student')->with(['student'])->orderBy('surname', 'asc')->limit($quantity)->get();
     }
 
     private function selectComplexUsersTasks(int $quantity) : mixed
@@ -151,7 +156,6 @@ class Benchmark
      *     INSERT QUERIES
      * ======================
      */
-
     private function insertUsers(array $users) : mixed
     {
         return User::insert($users);
@@ -175,47 +179,14 @@ class Benchmark
      *     DELETE QUERIES
      * ======================
      */
-
-
-    private function generateRandomUsers(int $quantity) : array
-    {
-        $users = array();
-        $faker = Factory::create('pl_PL');
-
-        for($i = 0; $i < $quantity; $i++) {
-            $users[] = [
-                'name' => $faker->firstName,
-                'surname' => $faker->lastName,
-                'email' => 'email_new_' . $i+1 . '@email.com',
-                'account_role' => $faker->randomElement(['student', 'teacher']),
-                'password' => 'User#12345',
-                'active' => 1
-            ];
-        }
-
-        return $users;
-    }
-
-    private function generateRandomCourses(int $quantity) : array
-    {
-        $courses = array();
-        $faker = Factory::create('pl_PL');
-
-        for($i = 0; $i < $quantity; $i++) {
-            $courses[] = [
-                'name' => $faker->sentence(5),
-                'description' => $faker->text,
-                'available_from' => $faker->dateTimeBetween('-3 weeks', '+3 weeks'),
-                'available_to' => $faker->dateTimeBetween('+4 weeks', '12 weeks')
-            ];
-        }
-
-        return $courses;
-    }
-
     private function deleteLastNUsers(int $quantity) : void
     {
         User::orderBy('id', 'desc')->take($quantity)->delete();
+    }
+
+    private function deleteLastNCourses(int $quantity) : void
+    {
+        Course::orderBy('id', 'desc')->take($quantity)->delete();
     }
 }
 

@@ -1,42 +1,83 @@
 [
   {
-    "orm_name": "NAME",
+    "orm_name": "ORM ONE",
     "orm_version": "VERSION",
+    "benchmark_date": "DATETIME",
     "benchmarks": [
       {
-        "name": "ABC",
-        "num_of_records_times": {
-          "100": 12.1,
-          "500": 50.23,
-          "1000": 100.11
-        },
-        "queries": [
-          "QUERY 1",
-          "QUERY 2",
-          "..."
-        ]
-      }
+        "name": "First Benchmark",
+        "number_of_records": {
+          "100": {
+            "time": 1.6123461723327637,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          },
+          "500": {
+            "time": 2.231232151111111,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          },
+          "1000": {
+            "time": 2.231232151111111,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          }
+        }
+      },
+      {
+        "name": "Second Benchmark",
+        "number_of_records": {
+          "100": {
+            "time": 1.6123461723327637,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          },
+          "500": {
+            "time": 2.231232151111111,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          },
+          "1000": {
+            "time": 2.231232151111111,
+            "min": 1.1379718780517578,
+            "max": 32.47499465942383,
+            "queries": [
+              "QUERY 1",
+              "QUERY 2",
+              "..."
+            ]
+          }
+        }
+      },
+      "... another benchmarks ..."
     ]
   },
-  {
-    "orm_name": "NAME TWO",
-    "orm_version": "VERSION",
-    "benchmarks": [
-      {
-        "name": "ABC",
-        "num_of_records_times": {
-          "100": 12.1,
-          "500": 50.23,
-          "1000": 100.11
-        },
-        "queries": [
-          "QUERY 1",
-          "QUERY 2",
-          "..."
-        ]
-      }
-    ]
-  }
+  "... another ORM frameworks ..."
 ]
 
 

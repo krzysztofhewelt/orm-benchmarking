@@ -1,7 +1,7 @@
 <?php
 
 require "vendor/autoload.php";
-require_once "dbCredentialsLoader.php";
+require_once "../dbCredentialsLoader.php";
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 

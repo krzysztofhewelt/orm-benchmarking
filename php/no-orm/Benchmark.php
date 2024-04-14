@@ -1,6 +1,6 @@
 <?php
 
-require_once "../ResultsManager.php";
+require_once "../../ResultsManager.php";
 
 class Benchmark
 {

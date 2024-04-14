@@ -1,4 +1,4 @@
-const {Op} = require('sequelize');
+const {Op, Sequelize} = require('sequelize');
 const {User, Student, Course, Task, Teacher} = require("./Entities");
 const {database, lastBenchmarkQueries} = require("./database");
 
@@ -32,7 +32,8 @@ const run = async (benchmark, times = NUMBER_OF_REPEATS) => {
     const avgTime = +(tempTimes.reduce((sum, el) => sum + el, 0) / times).toFixed(2);
     addBenchmark(benchmark.name, avgTime, lastBenchmarkQueries);
 
-    console.log("AVG time of benchmark " + benchmark.name + ": " + avgTime + " ms.");
+    // console.log("AVG time of benchmark " + benchmark.name + ": " + avgTime + " ms.");
+    console.log(`AVG time of ${benchmark.name}:`);
 };
 
 const addBenchmark = (benchmark, avgTime, queries) => {
@@ -52,7 +53,7 @@ const sendSaveResults = async () => {
         },
         body: JSON.stringify({
             orm_name: "Sequelize",
-            orm_version: "6.32.1",
+            orm_version: Sequelize.version,
             benchmarks: benchmarks
         })
     }).then((response) => {

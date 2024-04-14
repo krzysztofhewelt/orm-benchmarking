@@ -12,14 +12,16 @@ class ResultsManager
             return false;
         }
 
-        if($override) {
+        $fileExists = file_exists(self::RESULTS_FILE);
+
+        if($override && $fileExists) {
             if(!unlink(self::RESULTS_FILE)) {
                 echo "Cannot delete results file!";
                 return false;
             }
         }
 
-        if (!file_exists(self::RESULTS_FILE))
+        if (!$fileExists)
             touch(self::RESULTS_FILE);
 
         $fileData = file_get_contents(self::RESULTS_FILE);

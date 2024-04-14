@@ -11,6 +11,8 @@
             "Database\\Seeders\\": "Database/Seeders/",
             "Database\\Migrations\\": "Database/Migrations/"
         },
-        "files": ["bootstrap.php"]
+        "files": [
+            "bootstrap.php"
+        ]
     }
 }
