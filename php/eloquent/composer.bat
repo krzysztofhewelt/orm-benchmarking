@@ -1,1 +1,1 @@
-@php "%~dp0composer.phar" %*
+@REM @php "%~dp0composer.phar" %*

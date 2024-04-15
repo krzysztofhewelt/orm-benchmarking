@@ -20,6 +20,7 @@ function generateRandomCourses(int $quantity) : array
     return $courses;
 }
 
+// TODO: add teacher/student information
 function generateRandomUsers(int $quantity) : array
 {
     $users = array();

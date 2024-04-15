@@ -30,7 +30,7 @@ class Benchmark
     public function __construct()
     {
         $this->run('selectSimpleUsers');
-        $this->run('selectComplexUsersWithInformation');
+        $this->run('selectComplexStudentsWithInformationAndCourses');
         $this->run('selectComplexUsersTasks');
         $this->randomUsers = generateRandomUsers(self::NUMBER_OF_RECORDS[count(self::NUMBER_OF_RECORDS)-1]);
 
@@ -133,17 +133,16 @@ class Benchmark
      *     SELECT QUERIES
      * ======================
      */
-
-    // something else with WHERE clause
+    // TODO: SELECT QUERIES DONE
 
     private function selectSimpleUsers(int $quantity) : mixed
     {
         return User::limit($quantity)->get();
     }
 
-    private function selectComplexUsersWithInformation(int $quantity) : mixed
+    private function selectComplexStudentsWithInformationAndCourses(int $quantity) : mixed
     {
-        return User::where('account_role', '=', 'student')->with(['student'])->orderBy('surname', 'asc')->limit($quantity)->get();
+        return User::where('account_role', '=', 'student')->with(['student', 'courses'])->orderBy('surname')->limit($quantity)->get();
     }
 
     private function selectComplexUsersTasks(int $quantity) : mixed
@@ -156,12 +155,15 @@ class Benchmark
      *     INSERT QUERIES
      * ======================
      */
+    // TODO: another idea: 1. add users with information, 2. add tasks to the course
+    // TODO: OK
     private function insertUsers(array $users) : mixed
     {
         return User::insert($users);
     }
 
-    private function insertCourses(array $courses) : mixed
+    // TODO: Add courses with n tasks [1, 5, 15]
+    private function insertCoursesWithTasks(array $courses) : mixed
     {
         return Course::insert($courses);
     }
@@ -171,7 +173,14 @@ class Benchmark
      *     UPDATE QUERIES
      * ======================
      */
-
+    // TODO: Update course with transaction: description or set existing date (for example last September due to ending classes)
+    // TODO: use limit n rows
+    // TODO: only one update scenario
+    // kursy
+    // with transaction?
+    // wydluz termin?
+    // zmień opis?
+    // tutaj tylko update LIMIT X Records
 
 
     /**
@@ -179,6 +188,10 @@ class Benchmark
      *     DELETE QUERIES
      * ======================
      */
+
+    // TODO: detach n users from all courses, but we are need to assign them once again
+    // TODO: delete last n Users
+
     private function deleteLastNUsers(int $quantity) : void
     {
         User::orderBy('id', 'desc')->take($quantity)->delete();

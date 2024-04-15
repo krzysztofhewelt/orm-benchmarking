@@ -20,8 +20,8 @@ function dbCredentialsLoader(string $filepath = "../../dbCredentials.json"): arr
         throw new ErrorException("Not valid credentials");
     }
 
-    if($jsonFile['driver'] != 'pgsql')
-        throw new ErrorException('Available driver: pgsql');
+    if($jsonFile['driver'] != 'mysql')
+        throw new ErrorException('Available driver: mysql');
 
 
     return $jsonFile;

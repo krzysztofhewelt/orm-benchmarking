@@ -1,7 +1,7 @@
-@REM cd php_eloquent
+@REM cd php\eloquent
 @REM composer install
 @REM
-@REM cd ../js_sequelize
+@REM cd ..\js\sequelize
 @REM npm install
 
 cd php\eloquent

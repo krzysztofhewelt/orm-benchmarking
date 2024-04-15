@@ -16,7 +16,8 @@ try {
         "port" => $dbCredentials['port'],
         "database" => $dbCredentials['database'],
         "username" => $dbCredentials['username'],
-        "password" => $dbCredentials['password']
+        "password" => $dbCredentials['password'],
+        'options' => [ PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false ]
     ]);
 } catch (ErrorException $e) {
     echo $e;
