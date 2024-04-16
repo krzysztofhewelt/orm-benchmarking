@@ -14,6 +14,8 @@
 # Database
 We are simulating an LMS (Learning Management System). There are simplified database based on [Learnin](https://github.com/krzysztofhewelt/learnin), my LMS implementation.
 
+![database.png](screenshots/database.png)
+
 # Benchmark cases
 1. Select queries:
 * Select n first users
