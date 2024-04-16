@@ -1,2 +1,4 @@
 .idea
+backup.sql
+node_modules
 results.json

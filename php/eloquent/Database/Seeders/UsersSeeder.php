@@ -43,8 +43,8 @@ class UsersSeeder
                     'surname' => $this->faker->lastName,
                     'email' => $this->faker->unique()->safeEmail,
                     'account_role' => 'teacher',
-                    'password' => 'User#12345',
-                    'active' => 1
+                    'password' => '$2a$12$zBnz52gjTjWlkWQ0vIAibuCAwFQtj9v3D2xsGMmm2lxj4NMlIJfn.',
+                    'active' => $this->faker->numberBetween(0, 1)
                 ]);
 
             Teacher::create([

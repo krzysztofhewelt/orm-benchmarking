@@ -5,4 +5,4 @@
 @REM npm install
 
 cd php\eloquent
-vendor\bin\phinx rollback -t 0 & vendor\bin\phinx migrate & php DatabaseSeeder.php
+vendor\bin\phinx rollback -t 0 & vendor\bin\phinx migrate & php DatabaseSeeder.php & php RandomUsersGenerator.php

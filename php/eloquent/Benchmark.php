@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 require "bootstrap.php";
 require "../../ResultsManager.php";
-require "BenchmarkUtils.php";
+require "RandomUsersGenerator.php";
+require "RandomCoursesGenerator.php";
 
 use App\Entities\Course;
 use App\Entities\User;
@@ -12,8 +13,9 @@ use Illuminate\Database\Capsule\Manager as DB;
 class Benchmark
 {
     const NUMBER_OF_REPEATS = 100;
-    const NUMBER_OF_RECORDS = [1, 50, 100, 1000];
-    private array $randomUsers;
+    const NUMBER_OF_RECORDS = [1, 50, 100, 500, 1000];
+    private RandomUsersGenerator $randomUsersGenerator;
+    private RandomCoursesGenerator $randomCoursesGenerator;
 
     /**
      * Contains all benchmarks results.
@@ -29,58 +31,63 @@ class Benchmark
 
     public function __construct()
     {
-        $this->run('selectSimpleUsers');
-        $this->run('selectComplexStudentsWithInformationAndCourses');
-        $this->run('selectComplexUsersTasks');
-        $this->randomUsers = generateRandomUsers(self::NUMBER_OF_RECORDS[count(self::NUMBER_OF_RECORDS)-1]);
+        $this->backupDatabase();
+        $this->randomUsersGenerator = new RandomUsersGenerator(1000, false);
+        $this->randomCoursesGenerator = new RandomCoursesGenerator(1000, false);
 
-        $this->run('insertUsers', typeOfBenchmark: 'create');
-//        $this->run('insertCourses', typeOfBenchmark: 'create');
-//
-//        // only one record to update
-//        $this->run('updateUsers', typeOfBenchmark: 'update');
-//        $this->run('updateCourses', typeOfBenchmark: 'update');
-//
-//        $this->run('deleteUsers', typeOfBenchmark: 'delete');
-//        $this->run('deleteCourses', typeOfBenchmark: 'delete');
+        $this->run('selectSimpleUsers', typeOfBenchmark: 'select');
+        $this->run('selectComplexStudentsWithInformationAndCourses', typeOfBenchmark: 'select');
+        $this->run('selectComplexUsersTasks', typeOfBenchmark: 'select');
+
+        $this->run('insertUsers', typeOfBenchmark: 'insert', table: 'users');
+        $this->run('insertCourses', typeOfBenchmark: 'insert', table: 'courses');
+
+        $this->run('updateCoursesEndDate', typeOfBenchmark: 'update');
+
+        $this->run('detachUsersFromCourses', typeOfBenchmark: 'delete');
+        $this->run('deleteCourses', typeOfBenchmark: 'delete');
 
         $this->saveResultsData();
     }
 
-    public function run(string $method, int $times = self::NUMBER_OF_REPEATS, array $numberOfRecords = self::NUMBER_OF_RECORDS, string $typeOfBenchmark = ''): void
+    public function run(string $method, int $times = self::NUMBER_OF_REPEATS, array $numberOfRecords = self::NUMBER_OF_RECORDS, string $typeOfBenchmark = '', string $table = ''): void
     {
         echo sprintf("avg time of %s:\n", $method);
 
         $benchmarkNumberOfRecords = array();
         foreach($numberOfRecords as $recordsToFetch) {
             $tempTimes = array();
-//            $methodArguments = ($typeOfBenchmark === 'update') ? $this->randomUsers : $recordsToFetch;
-            $methodArguments = ($typeOfBenchmark === 'create') ? array_slice($this->randomUsers, 0, $recordsToFetch) : $recordsToFetch;
+            $methodArguments = $this->getMethodArgumentForMethod($typeOfBenchmark, $table, $recordsToFetch);
 
             for ($i = 0; $i < $times; $i++) {
                 $start = microtime(true);
                 $this->$method($methodArguments);
                 $tempTimes[] = microtime(true) - $start;
 
-                if($typeOfBenchmark === 'create') {
-                    $this->deleteLastNUsers($recordsToFetch);
-                } elseif ($typeOfBenchmark === 'delete') {
-                    # add n users
-                }
+                if($typeOfBenchmark !== 'select')
+                    $this->restoreDatabase();
             }
 
             $avgTime = (array_sum($tempTimes) / count($tempTimes)) * 1000;
             $minTime = min($tempTimes) * 1000;
             $maxTime = max($tempTimes) * 1000;
 
+            $generatedQueries = $this->getQueries($method, $methodArguments, $typeOfBenchmark);
+            $numberOfQueries = count($generatedQueries);
+            if($typeOfBenchmark !== 'select')
+                if(count($generatedQueries) > 10)
+                    $generatedQueries = array_slice($generatedQueries, 0, 10);
+
             $benchmarkNumberOfRecords[$recordsToFetch] = [
                 'time' => $avgTime,
                 'min' => $minTime,
                 'max' => $maxTime,
-                'queries' => $this->getQueries($method, $methodArguments)
+                'numberOfQueries' => $numberOfQueries,
+                'queries' => $generatedQueries
             ];
 
-            if($typeOfBenchmark === 'create') $this->deleteLastNUsers($recordsToFetch);
+            if($typeOfBenchmark !== 'select')
+                $this->restoreDatabase();
 
             echo sprintf(" - %d: %f; min=%f, max=%f\n", $recordsToFetch, $avgTime, $minTime, $maxTime);
         }
@@ -125,7 +132,7 @@ class Benchmark
                 "orm_name" => "eloquent",
                 "orm_version" => \Composer\InstalledVersions::getVersion('illuminate/database'),
                 "benchmarks" => $this->benchmarks
-            ]);
+            ], true);
     }
 
     /**
@@ -155,15 +162,32 @@ class Benchmark
      *     INSERT QUERIES
      * ======================
      */
-    // TODO: another idea: 1. add users with information, 2. add tasks to the course
+    // TODO: another idea: 1. add users with information, 2. add courses
     // TODO: OK
-    private function insertUsers(array $users) : mixed
+    private function insertUsers(array $users) : void
     {
-        return User::insert($users);
+        foreach ($users as $userData) {
+            DB::beginTransaction();
+            $user = User::create([
+                'name' => $userData['name'],
+                'surname' => $userData['surname'],
+                'email' => $userData['email'],
+                'password' => $userData['password'],
+                'account_role' => $userData['account_role'],
+                'active' => $userData['active']
+            ]);
+
+            if(isset($userData['student']))
+                $user->student()->create($userData['student']);
+
+            if(isset($userData['courses']))
+                $user->courses()->createMany($userData['courses']);
+
+            DB::commit();
+        }
     }
 
-    // TODO: Add courses with n tasks [1, 5, 15]
-    private function insertCoursesWithTasks(array $courses) : mixed
+    private function insertCourses(array $courses) : mixed
     {
         return Course::insert($courses);
     }
@@ -173,33 +197,56 @@ class Benchmark
      *     UPDATE QUERIES
      * ======================
      */
-    // TODO: Update course with transaction: description or set existing date (for example last September due to ending classes)
-    // TODO: use limit n rows
-    // TODO: only one update scenario
-    // kursy
-    // with transaction?
-    // wydluz termin?
-    // zmień opis?
-    // tutaj tylko update LIMIT X Records
-
+    function updateCoursesEndDate(int $quantity)
+    {
+        return Course::take($quantity)->update(['available_to' => '2024-10-01']);
+    }
 
     /**
      * ======================
      *     DELETE QUERIES
      * ======================
      */
-
-    // TODO: detach n users from all courses, but we are need to assign them once again
-    // TODO: delete last n Users
-
-    private function deleteLastNUsers(int $quantity) : void
+    private function detachUsersFromCourses(int $quantityUsers) : mixed
     {
-        User::orderBy('id', 'desc')->take($quantity)->delete();
+        return User::take($quantityUsers)->get()->each(function ($user) {
+            $user->courses()->detach();
+        });
     }
 
-    private function deleteLastNCourses(int $quantity) : void
+    private function deleteCourses(int $quantity) : mixed
     {
-        Course::orderBy('id', 'desc')->take($quantity)->delete();
+        return Course::orderBy('id', 'desc')->take($quantity)->delete();
+    }
+
+    /**
+     * Useful functions
+     */
+
+    private function backupDatabase()
+    {
+        exec("php ../../databaseBackup.php");
+    }
+
+    private function restoreDatabase()
+    {
+        exec("php ../../databaseRestore.php");
+    }
+
+    private function getMethodArgumentForMethod(string $type = '', string $table = '', int $quantity = 1) : int|string|array
+    {
+        if($type === 'select' || $type === 'update' || $type === 'delete')
+            return $quantity;
+
+        if($type === 'insert') {
+            if($table === 'users')
+                return array_slice($this->randomUsersGenerator->getRandomUsers(), 0, $quantity);
+
+            if($table === 'courses')
+                return array_slice($this->randomCoursesGenerator->getRandomCourses(), 0, $quantity);
+        }
+
+        return '';
     }
 }
 

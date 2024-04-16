@@ -10,8 +10,6 @@
     "express": "^4.19.2",
     "json-formatter-js": "^2.5.10",
     "mariadb": "^3.3.0",
-    "pg": "^8.11.3",
-    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.2"
   }
 }
