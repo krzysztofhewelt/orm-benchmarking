@@ -46,8 +46,8 @@ class RandomCoursesGenerator
             $this->randomCourses[] = [
                 'name' => $this->faker->sentence(5),
                 'description' => $this->faker->text,
-                'available_from' => $this->faker->dateTimeBetween('-3 weeks', '+3 weeks')->format('d-m-Y H:i:s'),
-                'available_to' => $this->faker->dateTimeBetween('+4 weeks', '12 weeks')->format('d-m-Y H:i:s')
+                'available_from' => $this->faker->dateTimeBetween('-3 weeks', '+3 weeks')->format('Y-m-d H:i:s'),
+                'available_to' => $this->faker->dateTimeBetween('+4 weeks', '12 weeks')->format('Y-m-d H:i:s')
             ];
         }
     }

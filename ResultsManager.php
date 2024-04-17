@@ -63,7 +63,7 @@ class ResultsManager
             if ((!property_exists($benchmark, "name") || !is_string($benchmark->name)))
                 return false;
 
-            if ((!property_exists($benchmark, "numberOfRecords") || !is_array($benchmark->numberOfRecords)))
+            if ((!property_exists($benchmark, "numberOfRecords") || !is_object($benchmark->numberOfRecords)))
                 return false;
 
             foreach ($benchmark->numberOfRecords as $benchmarkNumberOfRecords) {

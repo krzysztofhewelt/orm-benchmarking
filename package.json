@@ -2,7 +2,7 @@
   "name": "orm_benchmarking",
   "version": "1.0.0",
   "description": "",
-  "main": "testEnv.js",
+  "main": "index.js",
   "author": "Krzysztof Hewelt",
   "dependencies": {
     "chart.js": "^4.4.2",

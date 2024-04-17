@@ -1,137 +1,15 @@
-// const {Op, Sequelize} = require('sequelize');
-// const {User, Student, Course, Task, Teacher} = require("./Entities");
-// const {database, lastBenchmarkQueries} = require("./database");
-//
-// // benchmark results var and constant
-// const NUMBER_OF_REPEATS = 100;
-// const NUMBER_OF_RECORDS = [1, 50, 100, 500, 1000];
-// let benchmarks = [];
-//
-// /**
-//  * ======================
-//  *     SELECT QUERIES
-//  * ======================
-//  */
-// const selectSimpleUsers = async (quantity) => {
-//     return await User.findAll({
-//         limit: quantity
-//     });
-// };
-//
-// const selectComplexStudentsWithInformationAndCourses = async (quantity) => {
-//     return await User.findAll({
-//         where: {
-//             account_role: {
-//                 [Op.eq]: 'student'
-//             }
-//         },
-//         include: [Student, Course],
-//         order: [
-//             ['surname']
-//         ],
-//         limit: quantity
-//     });
-// };
-//
-// const selectComplexUsersTasks = async (quantity) => {
-//     return await User.findAll({
-//         limit: quantity,
-//         include: [
-//             {
-//                 model: Course,
-//                 include: [
-//                     {
-//                         model: Task
-//                     }
-//                 ]
-//             }
-//         ]
-//     });
-// }
-//
-// // run function
-// const run = async (benchmark, times = NUMBER_OF_REPEATS, numberOfRecords = NUMBER_OF_RECORDS, typeOfBenchmark = '', table = '') => {
-//     console.log(`avg time of ${benchmark.name}:`);
-//
-//     for (let i = 0; i < numberOfRecords.length; i++) {
-//         let tempTimes = [];
-//         let recordsToFetch = numberOfRecords[i];
-//
-//         for (let j = 0; j < times; j++) {
-//             let start = performance.now();
-//             await benchmark(recordsToFetch);
-//             let stop = performance.now();
-//             tempTimes.push(stop - start);
-//         }
-//
-//         console.log(lastBenchmarkQueries);
-//
-//         const minTime = Math.min(...tempTimes).toFixed(2);
-//         const maxTime = Math.max(...tempTimes).toFixed(2);
-//         const avgTime = +(tempTimes.reduce((sum, el) => sum + el, 0) / times).toFixed(2);
-//
-//         console.log(` - ${recordsToFetch}: ${avgTime}; min=${minTime}, max=${maxTime}`)
-//     }
-// };
-//
-// const addBenchmark = (benchmark, avgTime, queries) => {
-//     benchmarks.push({
-//         name: benchmark,
-//         time: avgTime,
-//         queries: queries
-//     });
-// };
-//
-// // send request to php
-// const sendSaveResults = async () => {
-//     await fetch("http://localhost/orm_benchmarking/index.php?save-results", {
-//         method: "POST",
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             orm_name: "Sequelize",
-//             orm_version: Sequelize.version,
-//             benchmarks: benchmarks
-//         })
-//     }).then((response) => {
-//         if (!response.ok)
-//             throw "An error occurred during sending request: " + response.statusText;
-//     })
-// };
-//
-// // run benchmarks
-// console.log("Performing benchmark tests. Please wait...");
-//
-// Promise.all([
-//     run(selectSimpleUsers),
-//     run(selectComplexStudentsWithInformationAndCourses)
-//     run(selectComplexUsersTasks)
-// ]).then(() => {
-//     sendSaveResults()
-//         .then(() => {
-//             console.log("Results has been saved successfully.");
-//
-//             database.close().then(() => {
-//                 process.exit();
-//             });
-//         })
-//         .catch((error) => {
-//             console.log(error);
-//         });
-// });
-
 const {Op, Sequelize, sequelize} = require('sequelize');
 const {User, Student, Course, Task, Teacher} = require("./Entities");
-const {database, lastBenchmarkQueries} = require("./database");
+const {database, getBenchmarkQueries, countBenchmarkQueries, clearBenchmarkQueries } = require("./database");
+const {promisify} = require('util');
+const exec = promisify(require('child_process').exec);
 
 // Benchmark parameters
-const NUMBER_OF_REPEATS = 100;
-const NUMBER_OF_RECORDS = [1, 50, 100, 500, 1000];
+const NUMBER_OF_REPEATS = 10;
+const NUMBER_OF_RECORDS = [1, 50];
 let benchmarks = [];
 
 // Benchmark functions
-
 /**
  * Select simple users.
  * @param {number} quantity - The number of users to fetch.
@@ -230,9 +108,8 @@ const insertCourses = async (courses) => {
  * ======================
  */
 
-// TODO: CHECK THIS
 const updateCoursesEndDate = async (quantity) => {
-    return await Course.update({ available_to: '2024-10-01' }, { limit: quantity });
+    return await Course.update({ available_to: '2024-10-01' }, { where: {}, limit: quantity });
 }
 
 /**
@@ -241,7 +118,6 @@ const updateCoursesEndDate = async (quantity) => {
  * ======================
  */
 
-// TODO: FIX THIS
 const detachUsersFromCourses = async (quantityUsers) => {
     const users = await User.findAll({ limit: quantityUsers });
 
@@ -250,33 +126,24 @@ const detachUsersFromCourses = async (quantityUsers) => {
     }
 }
 
-// TODO: CHECK THIS
+// TODO: Order by Doesn't work
 const deleteCourses = async (quantity) => {
     return await Course.destroy({
-        order: ['id', 'desc'],
+        where: {},
+        order: [['id', 'desc']],
         limit: quantity
     });
 }
 
-// TODO: use this method in runBenchmark
-const getMethodArgumentForMethod = (data, type, table, quantity) => {
+const getMethodArgumentForMethod = (type, quantity, data = []) => {
     if(type === 'select' || type === 'update' || type === 'delete')
         return quantity;
 
-    if(type === 'insert') {
-        if(table === 'users')
-            return data.slice(0, quantity);
-
-        if(table === 'courses')
-            return data.slice(0, quantity);
-    }
+    if(type === 'insert')
+        return data.slice(0, quantity);
 
     return '';
 }
-
-
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
 
 async function backupDatabase() {
     await exec('php ../../databaseBackup.php');
@@ -291,44 +158,59 @@ async function restoreDatabase() {
  * Run benchmarks for given functions.
  * @returns {Promise<void>} - A promise indicating the completion of benchmarking.
  */
+
 const runBenchmarks = async () => {
     const benchmarkResults = [];
     const benchmarksToRun = [
-        // { benchmark: selectSimpleUsers, name: 'Simple Users' },
-        // { benchmark: selectComplexStudentsWithInformationAndCourses, name: 'Complex Students with Information and Courses' },
-        // { benchmark: selectComplexUsersTasks, name: 'Complex Users Tasks' },
-        {benchmark: insertUsers, name: 'Inserts user with their information'}
+        { benchmark: selectSimpleUsers, type: 'select', name: 'Simple Users' },
+        { benchmark: selectComplexStudentsWithInformationAndCourses, type: 'select', name: 'Complex Students with Information and Courses' },
+        { benchmark: selectComplexUsersTasks, type: 'select', name: 'Complex Users Tasks' },
+        { benchmark: insertUsers, type: 'insert', table: 'users', name: 'Inserts user with their information' },
+        { benchmark: insertCourses, type: 'insert', table: 'courses', name: 'Inserts courses' },
+        { benchmark: updateCoursesEndDate, type: 'update', name: 'Update courses table (prolong end date)' },
+        { benchmark: detachUsersFromCourses, type: 'delete', name: 'Removes n users from all their courses' },
+        { benchmark: deleteCourses, type: 'delete', name: 'Delete n courses' },
     ];
 
     const courses = require('../../courses.json');
     const users = require('../../users.json');
 
-    for (const {benchmark, name} of benchmarksToRun) {
-        console.log(`Benchmarking ${name}`);
+    for (const {benchmark, name, type, table = ''} of benchmarksToRun) {
+        console.log(`Benchmarking ${benchmark}`);
         const results = {};
         for (let i = 0; i < NUMBER_OF_RECORDS.length; i++) {
             const tempTimes = [];
-            // const recordsToFetch = NUMBER_OF_RECORDS[i];
-            const recordsToFetch = users.slice(0, 1);
+            const recordsToFetch = NUMBER_OF_RECORDS[i];
+
+            let dataToAdd = [];
+            if(table === 'users')
+                dataToAdd = users;
+            else if (table === 'courses')
+                dataToAdd = courses;
+
+            const methodArgument = getMethodArgumentForMethod(type, recordsToFetch, dataToAdd);
 
             for (let j = 0; j < NUMBER_OF_REPEATS; j++) {
+                clearBenchmarkQueries();
+
                 const start = performance.now();
-                await benchmark(recordsToFetch);
+                await benchmark(methodArgument);
                 const stop = performance.now();
                 tempTimes.push(stop - start);
 
-                await executeCommand();
+                await restoreDatabase();
             }
 
-            const minTime = Math.min(...tempTimes).toFixed(2);
-            const maxTime = Math.max(...tempTimes).toFixed(2);
+            const minTime = +Math.min(...tempTimes).toFixed(2);
+            const maxTime = +Math.max(...tempTimes).toFixed(2);
             const avgTime = +(tempTimes.reduce((sum, el) => sum + el, 0) / NUMBER_OF_REPEATS).toFixed(2);
 
-            results[recordsToFetch] = {avgTime, minTime, maxTime};
-            console.log(`  - ${NUMBER_OF_RECORDS[i]}: Avg=${avgTime}, Min=${minTime}, Max=${maxTime}`);
+            results[recordsToFetch] = {"time": avgTime, "min": minTime, "max": maxTime, "numberOfQueries": countBenchmarkQueries(), "queries": getBenchmarkQueries()};
+            console.log(` - ${NUMBER_OF_RECORDS[i]}: Avg=${avgTime}, Min=${minTime}, Max=${maxTime}`);
         }
-        benchmarkResults.push({name, results});
+        benchmarkResults.push({name, "numberOfRecords": results});
     }
+
     return benchmarkResults;
 };
 
@@ -355,8 +237,8 @@ const sendSaveResults = async () => {
     })
 };
 
-// Run benchmarks and save results
 
+// Run benchmarks and save results
 console.log("Performing benchmark tests. Please wait...");
 
 runBenchmarks().then(benchmarkResults => {

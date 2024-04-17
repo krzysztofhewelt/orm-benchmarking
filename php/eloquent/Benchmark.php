@@ -140,8 +140,6 @@ class Benchmark
      *     SELECT QUERIES
      * ======================
      */
-    // TODO: SELECT QUERIES DONE
-
     private function selectSimpleUsers(int $quantity) : mixed
     {
         return User::limit($quantity)->get();
@@ -162,8 +160,6 @@ class Benchmark
      *     INSERT QUERIES
      * ======================
      */
-    // TODO: another idea: 1. add users with information, 2. add courses
-    // TODO: OK
     private function insertUsers(array $users) : void
     {
         foreach ($users as $userData) {

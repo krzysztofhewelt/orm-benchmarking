@@ -1,14 +1,26 @@
 const {Sequelize} = require("sequelize");
 
-const lastBenchmarkQueries = [];
+let lastBenchmarkQueries = [];
 const dbCredentials = require('../../dbCredentials.json');
 let driver = null;
 if(dbCredentials.driver === 'mysql')
     driver = 'mariadb'
 
 const getQueries = (queries) => {
-    // console.log(queries);
-    // lastBenchmarkQueries[0] = queries.replace('Executing (default): ', ''); // in my benchmark tests, sequelize always generates one query.
+    const cleanedQuery = queries.replace(/^Executing \(.*?\): /, ''); // remove 'Executing' part and ID from the query
+    lastBenchmarkQueries.push(cleanedQuery);
+};
+
+const clearQueriesHistory = () => {
+    lastBenchmarkQueries = [];
+};
+
+const getQueriesHistory = () => {
+    return lastBenchmarkQueries.slice(0, 10);
+};
+
+const countQueriesHistory = () => {
+    return lastBenchmarkQueries.length;
 };
 
 module.exports.database = new Sequelize(dbCredentials.database, dbCredentials.username, dbCredentials.password, {
@@ -18,4 +30,6 @@ module.exports.database = new Sequelize(dbCredentials.database, dbCredentials.us
     logging: getQueries
 });
 
-module.exports.lastBenchmarkQueries = lastBenchmarkQueries;
+module.exports.getBenchmarkQueries = getQueriesHistory;
+module.exports.countBenchmarkQueries = countQueriesHistory;
+module.exports.clearBenchmarkQueries = clearQueriesHistory;

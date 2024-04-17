@@ -7,5 +7,6 @@ class DBConnection extends PDO
         parent::__construct("pgsql:host=$host;port=$port;dbname=$database", $username, $password);
         $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $this->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
     }
 }
