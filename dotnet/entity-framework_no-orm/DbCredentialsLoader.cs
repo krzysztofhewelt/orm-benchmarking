@@ -9,7 +9,7 @@ public class DbCredentialsLoader
 
     public DbCredentials LoadDbCredentials()
     {
-        string path = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, _filename);
+        string path = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName, _filename);
         
         if (!File.Exists(path))
         {

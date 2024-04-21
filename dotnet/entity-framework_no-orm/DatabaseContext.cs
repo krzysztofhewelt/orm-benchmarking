@@ -7,7 +7,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace dotnet_entity_framework;
 
-public class BenchmarkContext : DbContext
+public class DatabaseContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Teacher> Teacher { get; set; }
@@ -15,12 +15,14 @@ public class BenchmarkContext : DbContext
     public DbSet<Course> Courses { get; set; }
     public DbSet<dotnet_entity_framework.Entities.Task> Tasks { get; set; }
 
-    private DbCredentials dbCredentials = (new DbCredentialsLoader()).LoadDbCredentials(); 
+    private DbCredentials dbCredentials = (new DbCredentialsLoader()).LoadDbCredentials();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder
-            .UseNpgsql(
-                string.Format("Host={0};Port={1};Database={2};Username={3};Password={4}", dbCredentials.host, dbCredentials.port, dbCredentials.database, dbCredentials.username, dbCredentials.password)
+            .UseMySql(
+                string.Format("server={0};port={1};database={2};user={3};password={4}", dbCredentials.host,
+                    dbCredentials.port, dbCredentials.database, dbCredentials.username, dbCredentials.password),
+                new MariaDbServerVersion(new Version(10, 5, 13))
             )
             .UseSnakeCaseNamingConvention()
             .LogTo(message =>
@@ -30,8 +32,8 @@ public class BenchmarkContext : DbContext
                     var messageSplitted = message.Split(Environment.NewLine);
                     string messageJoined = string.Join(" ", messageSplitted.Skip(2));
                     string messageTrimmed = Regex.Replace(messageJoined, @"\s{2,}", " ");
-                    
-                    Benchmark.lastQuery = messageTrimmed;
+
+                    BenchmarkEF.GeneratedQueries!.Add(messageTrimmed);
                 }
             }, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
 

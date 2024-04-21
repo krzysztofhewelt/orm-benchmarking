@@ -8,9 +8,9 @@
   <title>ORM benchmarks</title>
 
   <!-- version 4.4.1 -->
-  <script src="assets/chart.js"></script>
-  <script type="module" src="assets/functionalChart.js"></script>
   <script src="testEnv.js"></script>
+  <script src="/node_modules/chart.js/dist/Chart.umd.js"></script>
+
 
   <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -43,32 +43,43 @@
 
 <div class="banner">Test 1.</div>
 
-<canvas id="myChart"></canvas>
+<canvas id="simpleUsersChart" width="400" ></canvas>
+<canvas id="complexStudentsChart" width="400"></canvas>
 
 <script>
-  const testEnvDiv = document.getElementById('testEnv');
-  testEnvDiv.innerHTML = `${testEnv.os}, ${testEnv.cpu}, ${testEnv.ram}, ${testEnv.hdd}`
+  // Function to fetch chart data from the server
+  async function fetchChartData(url) {
+    const response = await fetch(url);
+    return await response.json();
+  }
 
-  const ctx = document.getElementById('myChart');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Arrays.map(<<orm_name>>)
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3], // Arrays.map(<<benchmark_time>>)
-        borderWidth: 1,
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
+  // Function to draw charts
+  async function drawCharts() {
+    const simpleUsersData = await fetchChartData("/simpleUsersData");
+    const complexStudentsData = await fetchChartData("/complexStudentsData");
+
+    // Draw charts
+    const simpleUsersCtx = document.getElementById("simpleUsersChart").getContext("2d");
+    new Chart(simpleUsersCtx, {
+      type: "line",
+      data: simpleUsersData,
+      options: {
+        // Chart options
       }
-    },
-  });
-</script>
+    });
 
+    const complexStudentsCtx = document.getElementById("complexStudentsChart").getContext("2d");
+    new Chart(complexStudentsCtx, {
+      type: "line",
+      data: complexStudentsData,
+      options: {
+        // Chart options
+      }
+    });
+  }
+
+  // Call drawCharts function when the DOM content is loaded
+  document.addEventListener("DOMContentLoaded", drawCharts);
+</script>
 </body>
 </html>

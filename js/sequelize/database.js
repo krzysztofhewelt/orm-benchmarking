@@ -1,7 +1,7 @@
 const {Sequelize} = require("sequelize");
+const dbCredentials = require('../../dbCredentials.json');
 
 let lastBenchmarkQueries = [];
-const dbCredentials = require('../../dbCredentials.json');
 let driver = null;
 if(dbCredentials.driver === 'mysql')
     driver = 'mariadb'

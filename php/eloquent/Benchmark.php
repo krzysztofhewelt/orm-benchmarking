@@ -5,6 +5,7 @@ require "bootstrap.php";
 require "../../ResultsManager.php";
 require "RandomUsersGenerator.php";
 require "RandomCoursesGenerator.php";
+require "../benchmarkUtils.php";
 
 use App\Entities\Course;
 use App\Entities\User;
@@ -31,7 +32,7 @@ class Benchmark
 
     public function __construct()
     {
-        $this->backupDatabase();
+        backupDatabase();
         $this->randomUsersGenerator = new RandomUsersGenerator(1000, false);
         $this->randomCoursesGenerator = new RandomCoursesGenerator(1000, false);
 
@@ -39,13 +40,13 @@ class Benchmark
         $this->run('selectComplexStudentsWithInformationAndCourses', typeOfBenchmark: 'select');
         $this->run('selectComplexUsersTasks', typeOfBenchmark: 'select');
 
-        $this->run('insertUsers', typeOfBenchmark: 'insert', table: 'users');
-        $this->run('insertCourses', typeOfBenchmark: 'insert', table: 'courses');
-
-        $this->run('updateCoursesEndDate', typeOfBenchmark: 'update');
-
-        $this->run('detachUsersFromCourses', typeOfBenchmark: 'delete');
-        $this->run('deleteCourses', typeOfBenchmark: 'delete');
+//        $this->run('insertUsers', typeOfBenchmark: 'insert', table: 'users');
+//        $this->run('insertCourses', typeOfBenchmark: 'insert', table: 'courses');
+//
+//        $this->run('updateCoursesEndDate', typeOfBenchmark: 'update');
+//
+//        $this->run('detachUsersFromCourses', typeOfBenchmark: 'delete');
+//        $this->run('deleteCourses', typeOfBenchmark: 'delete');
 
         $this->saveResultsData();
     }
@@ -57,7 +58,14 @@ class Benchmark
         $benchmarkNumberOfRecords = array();
         foreach($numberOfRecords as $recordsToFetch) {
             $tempTimes = array();
-            $methodArguments = $this->getMethodArgumentForMethod($typeOfBenchmark, $table, $recordsToFetch);
+
+            $data = [];
+            if($table === 'users')
+                $data = $this->randomUsersGenerator->getRandomUsers();
+            elseif($table === 'courses')
+                $data = $this->randomCoursesGenerator->getRandomCourses();
+
+            $methodArguments = getMethodArgumentForMethod($typeOfBenchmark, $table, $recordsToFetch, data: $data);
 
             for ($i = 0; $i < $times; $i++) {
                 $start = microtime(true);
@@ -65,14 +73,14 @@ class Benchmark
                 $tempTimes[] = microtime(true) - $start;
 
                 if($typeOfBenchmark !== 'select')
-                    $this->restoreDatabase();
+                    restoreDatabase();
             }
 
             $avgTime = (array_sum($tempTimes) / count($tempTimes)) * 1000;
             $minTime = min($tempTimes) * 1000;
             $maxTime = max($tempTimes) * 1000;
 
-            $generatedQueries = $this->getQueries($method, $methodArguments, $typeOfBenchmark);
+            $generatedQueries = $this->getQueries($method, $methodArguments);
             $numberOfQueries = count($generatedQueries);
             if($typeOfBenchmark !== 'select')
                 if(count($generatedQueries) > 10)
@@ -87,7 +95,7 @@ class Benchmark
             ];
 
             if($typeOfBenchmark !== 'select')
-                $this->restoreDatabase();
+                restoreDatabase();
 
             echo sprintf(" - %d: %f; min=%f, max=%f\n", $recordsToFetch, $avgTime, $minTime, $maxTime);
         }
@@ -213,36 +221,6 @@ class Benchmark
     private function deleteCourses(int $quantity) : mixed
     {
         return Course::orderBy('id', 'desc')->take($quantity)->delete();
-    }
-
-    /**
-     * Useful functions
-     */
-
-    private function backupDatabase()
-    {
-        exec("php ../../databaseBackup.php");
-    }
-
-    private function restoreDatabase()
-    {
-        exec("php ../../databaseRestore.php");
-    }
-
-    private function getMethodArgumentForMethod(string $type = '', string $table = '', int $quantity = 1) : int|string|array
-    {
-        if($type === 'select' || $type === 'update' || $type === 'delete')
-            return $quantity;
-
-        if($type === 'insert') {
-            if($table === 'users')
-                return array_slice($this->randomUsersGenerator->getRandomUsers(), 0, $quantity);
-
-            if($table === 'courses')
-                return array_slice($this->randomCoursesGenerator->getRandomCourses(), 0, $quantity);
-        }
-
-        return '';
     }
 }
 

@@ -72,7 +72,7 @@ class UsersSeeder
                     'surname' => $this->faker->lastName,
                     'email' => $this->faker->unique()->safeEmail,
                     'account_role' => 'student',
-                    'password' => 'User#12345',
+                    'password' => '$2a$12$zBnz52gjTjWlkWQ0vIAibuCAwFQtj9v3D2xsGMmm2lxj4NMlIJfn.',
                     'active' => 1
                 ]);
 

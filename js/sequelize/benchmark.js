@@ -1,13 +1,7 @@
-const {Op, Sequelize, sequelize} = require('sequelize');
+const {Op, sequelize} = require('sequelize');
 const {User, Student, Course, Task, Teacher} = require("./Entities");
 const {database, getBenchmarkQueries, countBenchmarkQueries, clearBenchmarkQueries } = require("./database");
-const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
-
-// Benchmark parameters
-const NUMBER_OF_REPEATS = 10;
-const NUMBER_OF_RECORDS = [1, 50];
-let benchmarks = [];
+const {getMethodArgumentForMethod, restoreDatabase, sendSaveResults} = require("../benchmarkUtils");
 
 // Benchmark functions
 /**
@@ -126,57 +120,41 @@ const detachUsersFromCourses = async (quantityUsers) => {
     }
 }
 
-// TODO: Order by Doesn't work
 const deleteCourses = async (quantity) => {
     return await Course.destroy({
         where: {},
-        order: [['id', 'desc']],
         limit: quantity
     });
 }
 
-const getMethodArgumentForMethod = (type, quantity, data = []) => {
-    if(type === 'select' || type === 'update' || type === 'delete')
-        return quantity;
 
-    if(type === 'insert')
-        return data.slice(0, quantity);
-
-    return '';
-}
-
-async function backupDatabase() {
-    await exec('php ../../databaseBackup.php');
-}
-
-async function restoreDatabase() {
-    await exec('php ../../databaseRestore.php');
-}
+// Benchmark parameters
+const NUMBER_OF_REPEATS = 100;
+const NUMBER_OF_RECORDS = [1, 50, 100, 500, 1000];
 
 
 /**
  * Run benchmarks for given functions.
  * @returns {Promise<void>} - A promise indicating the completion of benchmarking.
  */
-
 const runBenchmarks = async () => {
     const benchmarkResults = [];
     const benchmarksToRun = [
         { benchmark: selectSimpleUsers, type: 'select', name: 'Simple Users' },
         { benchmark: selectComplexStudentsWithInformationAndCourses, type: 'select', name: 'Complex Students with Information and Courses' },
         { benchmark: selectComplexUsersTasks, type: 'select', name: 'Complex Users Tasks' },
-        { benchmark: insertUsers, type: 'insert', table: 'users', name: 'Inserts user with their information' },
-        { benchmark: insertCourses, type: 'insert', table: 'courses', name: 'Inserts courses' },
-        { benchmark: updateCoursesEndDate, type: 'update', name: 'Update courses table (prolong end date)' },
-        { benchmark: detachUsersFromCourses, type: 'delete', name: 'Removes n users from all their courses' },
-        { benchmark: deleteCourses, type: 'delete', name: 'Delete n courses' },
+        // { benchmark: insertUsers, type: 'insert', table: 'users', name: 'Inserts user with their information' },
+        // { benchmark: insertCourses, type: 'insert', table: 'courses', name: 'Inserts courses' },
+        // { benchmark: updateCoursesEndDate, type: 'update', name: 'Update courses table (prolong end date)' },
+        // { benchmark: detachUsersFromCourses, type: 'delete', name: 'Removes n users from all their courses' },
+        // { benchmark: deleteCourses, type: 'delete', name: 'Delete n courses' },
     ];
 
     const courses = require('../../courses.json');
     const users = require('../../users.json');
 
     for (const {benchmark, name, type, table = ''} of benchmarksToRun) {
-        console.log(`Benchmarking ${benchmark}`);
+        console.log(`Benchmarking ${benchmark.name}`);
         const results = {};
         for (let i = 0; i < NUMBER_OF_RECORDS.length; i++) {
             const tempTimes = [];
@@ -198,7 +176,8 @@ const runBenchmarks = async () => {
                 const stop = performance.now();
                 tempTimes.push(stop - start);
 
-                await restoreDatabase();
+                if(type !== 'select')
+                    await restoreDatabase();
             }
 
             const minTime = +Math.min(...tempTimes).toFixed(2);
@@ -211,47 +190,18 @@ const runBenchmarks = async () => {
         benchmarkResults.push({name, "numberOfRecords": results});
     }
 
+    await database.close();
+
     return benchmarkResults;
 };
-
-// Save benchmark results
-
-/**
- * Send benchmark results to the server.
- * @returns {Promise<void>} - A promise indicating the completion of sending benchmark results.
- */
-const sendSaveResults = async () => {
-    await fetch("http://localhost/orm_benchmarking/index.php?save-results", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            orm_name: "Sequelize",
-            orm_version: Sequelize.version,
-            benchmarks: benchmarks
-        })
-    }).then((response) => {
-        if (!response.ok)
-            throw "An error occurred during sending request: " + response.statusText;
-    })
-};
-
 
 // Run benchmarks and save results
 console.log("Performing benchmark tests. Please wait...");
 
 runBenchmarks().then(benchmarkResults => {
-    console.log("Benchmark results:");
-    console.log(JSON.stringify(benchmarkResults, null, 2));
-    benchmarks = benchmarkResults;
-
-    sendSaveResults().then(() => {
+    sendSaveResults("Sequelize", sequelize.version, benchmarkResults).then(() => {
         console.log("Results have been saved successfully.");
-
-        database.close().then(() => {
-            process.exit();
-        });
+        process.exit();
     }).catch((error) => {
         console.log(error);
     });
