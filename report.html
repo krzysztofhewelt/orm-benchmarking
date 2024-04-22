@@ -9,13 +9,12 @@
 
   <!-- version 4.4.1 -->
   <script src="testEnv.js"></script>
-  <script src="/node_modules/chart.js/dist/Chart.umd.js"></script>
-
+  <script type="module" src="node_modules/chart.js/dist/Chart.umd.js"></script>
 
   <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
-<i>Generated date: xxxxx</i>
+<body style="padding: 40px 20px; max-width: calc(100vw - 80px);">
+<i>Generated date: <span id="generatedDate">xxx</span></i>
 
 <h1>Benchmark report</h1>
 
@@ -37,49 +36,24 @@
   <div id="testEnv"></div>
 </div>
 
-<div>
+<div style="margin-bottom: 40px;">
   No. of repeated tests: 100
 </div>
 
-<div class="banner">Test 1.</div>
+<!-- TODO: function that get orm_names, language and version: print this data in <ul> -->
+<!-- TODO: function that gets test env specs: print this data in div -->
+<!-- TODO: get benchmark names and for each draw two charts: with ORM comparsion and non-orm comparsion + SHOW QUERIES USING JSON-FORMATTER -->
+<!-- TODO: add description for each benchmark -->
 
-<canvas id="simpleUsersChart" width="400" ></canvas>
-<canvas id="complexStudentsChart" width="400"></canvas>
+<!-- TODO: finish non-orm c# benchmarks -->
+<!-- TODO: fix absolute paths in c# (dbCredentials.json and users/courses.json) -->
 
-<script>
-  // Function to fetch chart data from the server
-  async function fetchChartData(url) {
-    const response = await fetch(url);
-    return await response.json();
-  }
+<div class="banner">Benchmark 1.</div>
 
-  // Function to draw charts
-  async function drawCharts() {
-    const simpleUsersData = await fetchChartData("/simpleUsersData");
-    const complexStudentsData = await fetchChartData("/complexStudentsData");
-
-    // Draw charts
-    const simpleUsersCtx = document.getElementById("simpleUsersChart").getContext("2d");
-    new Chart(simpleUsersCtx, {
-      type: "line",
-      data: simpleUsersData,
-      options: {
-        // Chart options
-      }
-    });
-
-    const complexStudentsCtx = document.getElementById("complexStudentsChart").getContext("2d");
-    new Chart(complexStudentsCtx, {
-      type: "line",
-      data: complexStudentsData,
-      options: {
-        // Chart options
-      }
-    });
-  }
-
-  // Call drawCharts function when the DOM content is loaded
-  document.addEventListener("DOMContentLoaded", drawCharts);
-</script>
+<div style="display: grid; grid-template-columns: 1fr 1fr; height: 400px; width: 100%;">
+  <canvas id="simpleUsersChart" style="width: 40%;"></canvas>
+  <canvas id="selectComplexUsersTasks" style="width: 40%;"></canvas>
+</div>
+<script type="module" src="drawCharts.js"></script>
 </body>
 </html>

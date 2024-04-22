@@ -1,5 +1,6 @@
 .banner {
     background-color: silver;
+    border-radius: 30px;
     text-align: center;
     font-size: 2.5em;
     font-weight: bold;

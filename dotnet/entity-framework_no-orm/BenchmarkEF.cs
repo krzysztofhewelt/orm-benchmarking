@@ -157,8 +157,6 @@ public class BenchmarkEF
             entry.State = EntityState.Detached;
         }
     }
-    
-    // TODO: restore database and sensaveresults to benchmarkUtils
 
     private void AddBenchmark(string benchmark, Dictionary<int, BenchmarkResultCase> benchmarkResultCases)
     {

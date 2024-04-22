@@ -1,4 +1,4 @@
-function extractChartData(jsonData, benchmarkName) {
+export function extractChartData(jsonData, benchmarkName) {
     const data = {
         labels: [],
         datasets: []
@@ -45,13 +45,13 @@ function extractChartData(jsonData, benchmarkName) {
 }
 
 // Example usage:
-const jsonData = require("./results.json")/* Your JSON data */;
-const simpleUsersData = extractChartData(jsonData, "SelectSimpleUsers");
-const complexStudentsData = extractChartData(jsonData, "SelectComplexStudentsWithInformationAndCourses");
-
-console.log("Simple Users Data:", simpleUsersData.datasets);
-console.log("Complex Students Data:", complexStudentsData.datasets);
-
-module.exports.simpleUsersData = simpleUsersData;
-module.exports.complexStudentsData = complexStudentsData;
-module.exports.extractChartData = extractChartData;
+// const jsonData = require("./results.json")/* Your JSON data */;
+// const simpleUsersData = extractChartData(jsonData, "SelectSimpleUsers");
+// const complexStudentsData = extractChartData(jsonData, "SelectComplexStudentsWithInformationAndCourses");
+//
+// console.log("Simple Users Data:", simpleUsersData.datasets);
+// console.log("Complex Students Data:", complexStudentsData.datasets);
+//
+// module.exports.simpleUsersData = simpleUsersData;
+// module.exports.complexStudentsData = complexStudentsData;
+// module.exports.extractChartData = extractChartData;
