@@ -1,7 +1,7 @@
-const {Op, sequelize} = require('sequelize');
+const {Op, Sequelize} = require('sequelize');
 const {User, Student, Course, Task, Teacher} = require("./Entities");
 const {database, getBenchmarkQueries, countBenchmarkQueries, clearBenchmarkQueries } = require("./database");
-const {getMethodArgumentForMethod, restoreDatabase, sendSaveResults} = require("../benchmarkUtils");
+const {getMethodArgumentForMethod, restoreDatabase, sendSaveResults, calculateMean, calculateStandardDeviation} = require("../benchmarkUtils");
 
 // Benchmark functions
 /**
@@ -140,14 +140,17 @@ const NUMBER_OF_RECORDS = [1, 50, 100, 500, 1000];
 const runBenchmarks = async () => {
     const benchmarkResults = [];
     const benchmarksToRun = [
-        { benchmark: selectSimpleUsers, type: 'select', name: 'Simple Users' },
-        { benchmark: selectComplexStudentsWithInformationAndCourses, type: 'select', name: 'Complex Students with Information and Courses' },
-        { benchmark: selectComplexUsersTasks, type: 'select', name: 'Complex Users Tasks' },
-        // { benchmark: insertUsers, type: 'insert', table: 'users', name: 'Inserts user with their information' },
-        // { benchmark: insertCourses, type: 'insert', table: 'courses', name: 'Inserts courses' },
-        // { benchmark: updateCoursesEndDate, type: 'update', name: 'Update courses table (prolong end date)' },
-        // { benchmark: detachUsersFromCourses, type: 'delete', name: 'Removes n users from all their courses' },
-        // { benchmark: deleteCourses, type: 'delete', name: 'Delete n courses' },
+        { benchmark: selectSimpleUsers, type: 'select', name: 'Select n first users' },
+        { benchmark: selectComplexStudentsWithInformationAndCourses, type: 'select', name: 'Select first n students and their courses, order by surname' },
+        { benchmark: selectComplexUsersTasks, type: 'select', name: 'Select tasks to do for n first students' },
+
+        { benchmark: insertUsers, type: 'insert', table: 'users', name: 'Insert n users with additional information using transaction' },
+        { benchmark: insertCourses, type: 'insert', table: 'courses', name: 'Insert n courses' },
+
+        { benchmark: updateCoursesEndDate, type: 'update', name: 'Prolong available to date for n courses' },
+
+        { benchmark: detachUsersFromCourses, type: 'delete', name: 'Remove n first users from their courses' },
+        { benchmark: deleteCourses, type: 'delete', name: 'Delete n courses' },
     ];
 
     const courses = require('../../courses.json');
@@ -180,12 +183,11 @@ const runBenchmarks = async () => {
                     await restoreDatabase();
             }
 
-            const minTime = +Math.min(...tempTimes).toFixed(2);
-            const maxTime = +Math.max(...tempTimes).toFixed(2);
-            const avgTime = +(tempTimes.reduce((sum, el) => sum + el, 0) / NUMBER_OF_REPEATS).toFixed(2);
+            const avgTime = calculateMean(tempTimes);
+            const stdTime = calculateStandardDeviation(tempTimes);
 
-            results[recordsToFetch] = {"time": avgTime, "min": minTime, "max": maxTime, "numberOfQueries": countBenchmarkQueries(), "queries": getBenchmarkQueries()};
-            console.log(` - ${NUMBER_OF_RECORDS[i]}: Avg=${avgTime}, Min=${minTime}, Max=${maxTime}`);
+            results[recordsToFetch] = {"avgTime": avgTime, "stdTime": stdTime, "numberOfQueries": countBenchmarkQueries(), "queries": getBenchmarkQueries()};
+            console.log(` - ${NUMBER_OF_RECORDS[i]}: avg=${avgTime}, std=${stdTime}`);
         }
         benchmarkResults.push({name, "numberOfRecords": results});
     }
@@ -199,7 +201,7 @@ const runBenchmarks = async () => {
 console.log("Performing benchmark tests. Please wait...");
 
 runBenchmarks().then(benchmarkResults => {
-    sendSaveResults("Sequelize", sequelize.version, benchmarkResults).then(() => {
+    sendSaveResults("Sequelize", Sequelize.version, benchmarkResults).then(() => {
         console.log("Results have been saved successfully.");
         process.exit();
     }).catch((error) => {

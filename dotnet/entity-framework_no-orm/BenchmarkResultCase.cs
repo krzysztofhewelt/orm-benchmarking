@@ -2,16 +2,13 @@
 
 namespace dotnet_entity_framework;
 
-public class BenchmarkResultCase(double time, double min, double max, int numberOfQueries, List<string> queries)
+public class BenchmarkResultCase(double avgTime, double stdTime, int numberOfQueries, List<string> queries)
 {
-    [JsonPropertyName("time")]
-    public double Time { get; } = time;
+    [JsonPropertyName("avgTime")]
+    public double AvgTime { get; } = avgTime;
     
-    [JsonPropertyName("min")]
-    public double Min { get; } = min;
-    
-    [JsonPropertyName("max")]
-    public double Max { get; } = max;
+    [JsonPropertyName("stdTime")]
+    public double StdTime { get; } = stdTime;
     
     [JsonPropertyName("numberOfQueries")]
     public int NumberOfQueries { get; } = numberOfQueries;

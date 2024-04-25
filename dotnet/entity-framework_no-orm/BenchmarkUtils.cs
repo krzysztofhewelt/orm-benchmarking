@@ -87,4 +87,19 @@ public class BenchmarkUtils
         process.Start();
         process.WaitForExit();
     }
+
+    public double CalculateStandardDeviationTime(double[] array)
+    {
+        int numOfElements = array.Length;
+        
+        double variance = 0.0;
+        double mean = array.Average();
+        
+        foreach (int element in array)
+        {
+            variance += double.Pow(element - mean, 2);
+        }
+
+        return double.Round(double.Sqrt(variance / numOfElements), 2);
+    }
 }

@@ -17,6 +17,7 @@ const sendSaveResults = async (ormName, ormVersion, benchmarks) => {
         },
         body: JSON.stringify({
             orm_name: ormName,
+            orm_language: "JavaScript",
             orm_version: ormVersion,
             benchmarks: benchmarks
         })
@@ -36,7 +37,20 @@ const getMethodArgumentForMethod = (type, quantity, data = []) => {
     return '';
 };
 
+const calculateMean = (array) => {
+    const arraySize = array.length;
+    return +(array.reduce((sum, el) => sum + el, 0) / arraySize).toFixed(2)
+};
+
+const calculateStandardDeviation = (array) => {
+    const mean = calculateMean(array);
+    const arraySize = array.length;
+    return +Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((sum, el) => sum + el) / arraySize).toFixed(2);
+};
+
 module.exports.backupDatabase = backupDatabase;
 module.exports.restoreDatabase = restoreDatabase;
 module.exports.sendSaveResults = sendSaveResults;
 module.exports.getMethodArgumentForMethod = getMethodArgumentForMethod;
+module.exports.calculateMean = calculateMean;
+module.exports.calculateStandardDeviation = calculateStandardDeviation;

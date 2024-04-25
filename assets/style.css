@@ -1,8 +1,44 @@
-.banner {
-    background-color: silver;
+body {
+    padding: 20px;
+}
+
+.benchmark-banner {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
     border-radius: 30px;
     text-align: center;
+    padding: 25px 0;
+    margin: 30px 0;
+}
+
+.benchmark-banner__header {
     font-size: 2.5em;
     font-weight: bold;
-    padding: 25px 0;
+}
+
+.benchmark-banner__description {
+    font-size: 1.5em;
+    font-style: italic;
+}
+
+.chart {
+    width: 50%;
+    display: flex;
+}
+
+.json-formatter-string {
+    text-wrap: wrap !important;
+}
+
+ul {
+    margin: 0;
+}
+
+.benchmark-names-list {
+    margin: 20px 0;
+}
+
+h2 {
+    text-decoration: underline;
 }

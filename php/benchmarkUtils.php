@@ -26,3 +26,22 @@ function getMethodArgumentForMethod(string $type, string $table = '', int $quant
 
     return '';
 }
+
+function calculateStandardDeviation(array $array) : float {
+    $num_of_elements = count($array);
+
+    $variance = 0.0;
+    $average = calculateAverage($array);
+
+    foreach($array as $i)
+    {
+        $variance += pow(($i - $average), 2);
+    }
+
+    return sqrt($variance / $num_of_elements);
+}
+
+function calculateAverage(array $array) : float
+{
+    return array_sum($array) / count($array);
+}

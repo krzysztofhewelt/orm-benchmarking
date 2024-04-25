@@ -27,17 +27,17 @@ class Benchmark
         if (!$this->initializeDatabaseConnection())
             exit('Cannot initialize database connection');
 
-        $this->run('selectSimpleUsers', typeOfBenchmark: 'select');
-        $this->run('selectComplexStudentsWithInformationAndCourses', typeOfBenchmark: 'select');
-        $this->run('selectComplexUsersTasks', typeOfBenchmark: 'select');
+        $this->run('selectSimpleUsers', typeOfBenchmark: 'select', name: 'Select n first users');
+        $this->run('selectComplexStudentsWithInformationAndCourses', typeOfBenchmark: 'select', name: 'Select first n students and their courses, order by surname');
+        $this->run('selectComplexUsersTasks', typeOfBenchmark: 'select', name: 'Select tasks to do for n first students');
 
-        $this->run('insertUsers', typeOfBenchmark: 'insert', table: 'users');
-        $this->run('insertCourses', typeOfBenchmark: 'insert', table: 'courses');
+        $this->run('insertUsers', typeOfBenchmark: 'insert', table: 'users', name: 'Insert n users with additional information using transaction');
+        $this->run('insertCourses', typeOfBenchmark: 'insert', table: 'courses', name: 'Insert n courses');
 
-        $this->run('updateCoursesEndDate', typeOfBenchmark: 'update');
+        $this->run('updateCoursesEndDate', typeOfBenchmark: 'update', name: 'Prolong available to date for n courses');
 
-        $this->run('detachUsersFromCourses', typeOfBenchmark: 'delete');
-        $this->run('deleteCourses', typeOfBenchmark: 'delete');
+        $this->run('detachUsersFromCourses', typeOfBenchmark: 'delete', name: 'Remove n first users from their courses');
+        $this->run('deleteCourses', typeOfBenchmark: 'delete', name: 'Delete n courses');
 
         $this->saveResultsData();
     }
@@ -54,7 +54,7 @@ class Benchmark
         }
     }
 
-    public function run(string $method, int $times = self::NUMBER_OF_REPEATS, array $numberOfRecords = self::NUMBER_OF_RECORDS, string $typeOfBenchmark = '', string $table = ''): void
+    public function run(string $method, int $times = self::NUMBER_OF_REPEATS, array $numberOfRecords = self::NUMBER_OF_RECORDS, string $typeOfBenchmark = '', string $table = '', string $name = ''): void
     {
         echo sprintf("avg time of %s:\n", $method);
 
@@ -79,14 +79,12 @@ class Benchmark
                     restoreDatabase();
             }
 
-            $avgTime = (array_sum($tempTimes) / count($tempTimes)) * 1000;
-            $minTime = min($tempTimes) * 1000;
-            $maxTime = max($tempTimes) * 1000;
+            $avgTime = calculateAverage($tempTimes) * 1000;
+            $stdTime = calculateStandardDeviation($tempTimes) * 1000;
 
             $benchmarkNumberOfRecords[$recordsToFetch] = [
-                'time' => $avgTime,
-                'min' => $minTime,
-                'max' => $maxTime,
+                'avgTime' => $avgTime,
+                'stdTime' => $stdTime,
                 'numberOfQueries' => 0,
                 'queries' => []
             ];
@@ -94,11 +92,11 @@ class Benchmark
             if ($typeOfBenchmark !== 'select')
                 restoreDatabase();
 
-            echo sprintf(" - %d: %f; min=%f, max=%f\n", $recordsToFetch, $avgTime, $minTime, $maxTime);
+            echo sprintf(" - %d: avg=%f; std=%f\n", $recordsToFetch, $avgTime, $stdTime);
         }
 
         $this->addBenchmark(
-            $method,
+            $name,
             $benchmarkNumberOfRecords
         );
     }
@@ -116,6 +114,7 @@ class Benchmark
         return ResultsManager::saveResultToFile(
             (object)[
                 "orm_name" => "PHP NO-ORM",
+                "orm_language" => "PHP",
                 "orm_version" => "8.2",
                 "benchmarks" => $this->benchmarks
             ]);

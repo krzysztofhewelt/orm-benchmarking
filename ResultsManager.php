@@ -32,6 +32,7 @@ class ResultsManager
 
         $result = [
             'orm_name' => $jsonData->orm_name,
+            'orm_language' => $jsonData->orm_language,
             'orm_version' => $jsonData->orm_version,
             'benchmark_date' => date("d.m.Y H:i:s"),
             'benchmarks' => $jsonData->benchmarks
@@ -69,9 +70,8 @@ class ResultsManager
             foreach ($benchmark->numberOfRecords as $benchmarkNumberOfRecords) {
                 $benchmarkNumberOfRecords = (object)$benchmarkNumberOfRecords;
 
-                if ((!property_exists($benchmarkNumberOfRecords, "time") || !is_numeric($benchmarkNumberOfRecords->time))
-                    || (!property_exists($benchmarkNumberOfRecords, "min") || !is_numeric($benchmarkNumberOfRecords->min))
-                    || (!property_exists($benchmarkNumberOfRecords, "max") || !is_numeric($benchmarkNumberOfRecords->max))
+                if ((!property_exists($benchmarkNumberOfRecords, "avgTime") || !is_numeric($benchmarkNumberOfRecords->avgTime))
+                    || (!property_exists($benchmarkNumberOfRecords, "stdTime") || !is_numeric($benchmarkNumberOfRecords->stdTime))
                     || (!property_exists($benchmarkNumberOfRecords, "numberOfQueries") || !is_numeric($benchmarkNumberOfRecords->numberOfQueries))
                     || (!property_exists($benchmarkNumberOfRecords, "queries") || !is_array($benchmarkNumberOfRecords->queries)))
                     return false;

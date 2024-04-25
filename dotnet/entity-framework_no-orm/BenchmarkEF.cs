@@ -23,18 +23,19 @@ public class BenchmarkEF
         _benchmarkUtils = new BenchmarkUtils();
         GeneratedQueries = new List<string>();
 
-        // // run all benchmark methods...
-        Run("SelectSimpleUsers", type: "select");
-        Run("SelectComplexStudentsWithInformationAndCourses", type: "select");
-        // Run("SelectComplexUsersTasks", type: "select");
+        // run all benchmark methods...
+        Run("SelectSimpleUsers", type: "select", name: "Select n first users");
+        Run("SelectComplexStudentsWithInformationAndCourses", type: "select", name: "Select first n students and their courses, order by surname");
+        Run("SelectComplexUsersTasks", type: "select", name: "Select tasks to do for n first students");
+        
+        Run("InsertUsers", type: "insert", table: "users", name: "Insert n users with additional information using transaction");
+        Run("InsertCourses", type: "insert", table: "courses", name: "Insert n courses");
+        
+        Run("UpdateCoursesEndDate", type: "update", name: "Prolong available to date for n courses");
+        
+        Run("DetachUsersFromCourses", type: "delete", name: "Remove n first users from their courses");
+        Run("DeleteCourses", type: "delete", name: "Delete n courses");
 
-        // Run("InsertCourses", "insert", "courses");
-        // Run("InsertUsers", "insert", "users");
-
-        // Run("UpdateCoursesEndDate", type: "update");
-
-        // Run("DetachUsersFromCourses", type: "delete");
-        // Run("DeleteCourses", type: "delete");
     }
 
     private List<User> SelectSimpleUsers(int quantity)
@@ -108,7 +109,7 @@ public class BenchmarkEF
         _db.SaveChanges();
     }
 
-    public void Run(string method, string type = "", string table = "")
+    public void Run(string method, string type = "", string table = "", string name = "")
     {
         Stopwatch sw = new Stopwatch();
         double[] tempTimes = new double[_numberOfRepeats];
@@ -138,16 +139,15 @@ public class BenchmarkEF
 
             tempTimes[0] = tempTimes[1]; // remove outlier, cold start causes high value
             double avgTime = tempTimes.Average();
-            double minTime = tempTimes.Min();
-            double maxTime = tempTimes.Max();
+            double stdTime = _benchmarkUtils.CalculateStandardDeviationTime(tempTimes);
 
             benchmarkResultCases.Add(numberOfRecord,
-                new BenchmarkResultCase(avgTime, minTime, maxTime, GeneratedQueries!.Count, GeneratedQueries));
+                new BenchmarkResultCase(avgTime, stdTime, GeneratedQueries!.Count, GeneratedQueries));
 
-            Console.WriteLine($" - {numberOfRecord}: {avgTime}; min={minTime}, max={maxTime}");
+            Console.WriteLine($" - {numberOfRecord}: avg={avgTime}; std={stdTime}");
         }
 
-        AddBenchmark(method, benchmarkResultCases);
+        AddBenchmark(name, benchmarkResultCases);
     }
 
     private void DetachEntries()
@@ -169,6 +169,7 @@ public class BenchmarkEF
             new
             {
                 orm_name = "Entity Framework",
+                orm_language = "C#/.NET",
                 orm_version = "8.0.2",
                 benchmarks = _benchmarks
             }

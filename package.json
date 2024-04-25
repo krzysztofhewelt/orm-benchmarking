@@ -6,6 +6,7 @@
   "author": "Krzysztof Hewelt",
   "dependencies": {
     "chart.js": "^4.4.2",
+    "chartjs-chart-error-bars": "^4.4.0",
     "json-formatter-js": "^2.5.10",
     "mariadb": "^3.3.0",
     "sequelize": "^6.37.2"

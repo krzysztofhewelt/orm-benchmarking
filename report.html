@@ -1,59 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>ORM benchmarks</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ORM benchmarks</title>
 
-  <!-- version 4.4.1 -->
-  <script src="testEnv.js"></script>
-  <script type="module" src="node_modules/chart.js/dist/Chart.umd.js"></script>
+    <script type="module" src="node_modules/chart.js/dist/chart.umd.js"></script>
+    <script type="module" src="node_modules/json-formatter-js/dist/json-formatter.umd.js"></script>
 
-  <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
-<body style="padding: 40px 20px; max-width: calc(100vw - 80px);">
-<i>Generated date: <span id="generatedDate">xxx</span></i>
+<body>
+<i>Last benchmark date: <span id="lastBenchmarkDate">xxx</span></i>
 
 <h1>Benchmark report</h1>
 
-<p>GitHub repo: <a href="https://github.com/krzysztofhewelt/orm-benchmarking" target="_blank">https://github.com/krzysztofhewelt/orm-benchmarking</a>
+<p>
+    GitHub repo: <a href="https://github.com/krzysztofhewelt/orm-benchmarking" target="_blank">https://github.com/krzysztofhewelt/orm-benchmarking</a>
 </p>
 
 <div>
-  <b>Targets:</b>
-  <ul>
-    <li>Eloquent (PHP)</li>
-    <li>Sequelize (JS)</li>
-    <li>Entity Framework (.NET/C#)</li>
-    <li>Hibernate (Java)</li>
-  </ul>
+    <h2>Targets</h2>
+    <div class="benchmark-names-list" id="ormBenchmarksList">
+        <b>ORM:</b>
+    </div>
+    <div class="benchmark-names-list" id="noOrmBenchmarksList">
+        <b>Non-ORM:</b>
+    </div>
 </div>
 
 <div>
-  <b>Test environment:</b> <br>
-  <div id="testEnv"></div>
+    <h2>Test environment</h2>
+    <div id="testEnv"></div>
 </div>
 
-<div style="margin-bottom: 40px;">
-  No. of repeated tests: 100
+<div>
+    <h2>Number of repeated tests</h2>
+    100
 </div>
 
-<!-- TODO: function that get orm_names, language and version: print this data in <ul> -->
-<!-- TODO: function that gets test env specs: print this data in div -->
-<!-- TODO: get benchmark names and for each draw two charts: with ORM comparsion and non-orm comparsion + SHOW QUERIES USING JSON-FORMATTER -->
-<!-- TODO: add description for each benchmark -->
+<div>
+    <h2>Number of records</h2>
+    <div id="numberOfRecords"></div>
+</div>
 
+<!-- TODO: cleanup code -->
+<!-- TODO: make grid 2x2 for charts -->
 <!-- TODO: finish non-orm c# benchmarks -->
+
 <!-- TODO: fix absolute paths in c# (dbCredentials.json and users/courses.json) -->
 
-<div class="banner">Benchmark 1.</div>
+<div id="results"></div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; height: 400px; width: 100%;">
-  <canvas id="simpleUsersChart" style="width: 40%;"></canvas>
-  <canvas id="selectComplexUsersTasks" style="width: 40%;"></canvas>
-</div>
-<script type="module" src="drawCharts.js"></script>
+<div id="benchmarkCrudAverages"></div>
+
+<script type="module" src="assets/prepareReport.js"></script>
 </body>
 </html>
