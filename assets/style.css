@@ -22,9 +22,12 @@ body {
     font-style: italic;
 }
 
-.chart {
-    width: 50%;
-    display: flex;
+.charts-container {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px; /* Adjust the gap between grid items as needed */
 }
 
 .json-formatter-string {
@@ -41,4 +44,10 @@ ul {
 
 h2 {
     text-decoration: underline;
+}
+
+@media screen and (max-width: 1280px) {
+    .charts-container {
+        display: block;
+    }
 }

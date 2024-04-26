@@ -88,6 +88,11 @@ public class BenchmarkUtils
         process.WaitForExit();
     }
 
+    public double CalculateAverage(double[] array)
+    {
+        return Double.Round(array.Average(), 2);
+    }
+
     public double CalculateStandardDeviationTime(double[] array)
     {
         int numOfElements = array.Length;

@@ -9,7 +9,7 @@ public class Program
         await benchmarkEf.SendSaveResults();
         
         // No ORM benchmark
-        // BenchmarkNoORM benchmarkNoOrm = new BenchmarkNoORM();
-        // await benchmarkNoOrm.SendSaveResults();
+        BenchmarkNoOrm benchmarkNoOrm = new BenchmarkNoOrm();
+        await benchmarkNoOrm.SendSaveResults();
     }
 }

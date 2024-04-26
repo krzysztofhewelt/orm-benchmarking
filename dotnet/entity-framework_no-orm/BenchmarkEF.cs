@@ -129,7 +129,7 @@ public class BenchmarkEF
                 GetType().GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance)
                     ?.Invoke(this, new object[] { methodArgument });
                 sw.Stop();
-                tempTimes[i] = sw.ElapsedMilliseconds;
+                tempTimes[i] = sw.Elapsed.TotalMilliseconds;
 
                 if (type != "select")
                     _benchmarkUtils.RestoreDatabase();
@@ -138,11 +138,11 @@ public class BenchmarkEF
             }
 
             tempTimes[0] = tempTimes[1]; // remove outlier, cold start causes high value
-            double avgTime = tempTimes.Average();
+            double avgTime = _benchmarkUtils.CalculateAverage(tempTimes);
             double stdTime = _benchmarkUtils.CalculateStandardDeviationTime(tempTimes);
 
             benchmarkResultCases.Add(numberOfRecord,
-                new BenchmarkResultCase(avgTime, stdTime, GeneratedQueries!.Count, GeneratedQueries));
+                new BenchmarkResultCase(avgTime, stdTime, GeneratedQueries!.Count, GeneratedQueries[..9]));
 
             Console.WriteLine($" - {numberOfRecord}: avg={avgTime}; std={stdTime}");
         }

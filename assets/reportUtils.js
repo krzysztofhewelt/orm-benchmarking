@@ -61,21 +61,26 @@ export function showResultsFromAllBenchmarks(jsonData, resultsDiv) {
 
         // charts
         let ormChartContainer = document.createElement("div");
-        ormChartContainer.className = 'chart';
+        ormChartContainer.className = 'charts-container';
 
+        let ormChartDiv = document.createElement("div");
         let ormChart = document.createElement("canvas");
         let ormNames = getTargetsNames(jsonData, false);
         let resultsForBenchmarkName = getTimesForBenchmarksAndTargets(jsonData, ormNames, el);
         drawChart(resultsForBenchmarkName, el, ormChart);
 
+        ormChartDiv.appendChild(ormChart);
 
+        let nonOrmChartDiv = document.createElement("div");
         let nonOrmChart = document.createElement("canvas");
         let nonOrmNames = getTargetsNames(jsonData, true);
         let resultsForBenchmarkNameNonOrm = getTimesForBenchmarksAndTargets(jsonData, nonOrmNames, el);
         drawChart(resultsForBenchmarkNameNonOrm, el, nonOrmChart);
+        nonOrmChartDiv.appendChild(nonOrmChart);
 
-        ormChartContainer.appendChild(ormChart)
-        ormChartContainer.appendChild(nonOrmChart);
+
+        ormChartContainer.appendChild(ormChartDiv);
+        ormChartContainer.appendChild(nonOrmChartDiv);
         benchmarkDiv.appendChild(ormChartContainer);
 
         let queriesDiv = document.createElement("div");
@@ -123,14 +128,17 @@ export function showAverageTimesForCrudOperations(jsonData, element) {
     const ormNames = getTargetsNames(jsonData, false);
 
     let ormChartContainer = document.createElement("div");
-    ormChartContainer.className = 'chart';
+    ormChartContainer.className = 'charts-container';
 
     crudOperations.forEach(operation => {
         const averageTimes = calculateAverageTimesForBenchmarks(jsonData, ormNames, operation.benchmarkNames);
         let averageTimeChart = document.createElement("canvas");
+
+        let chart = document.createElement("div");
         drawChart(averageTimes, `Average time of ${operation.operation} operations`, averageTimeChart);
 
-        ormChartContainer.appendChild(averageTimeChart);
+        chart.appendChild(averageTimeChart);
+        ormChartContainer.appendChild(chart);
     })
 
     element.appendChild(ormChartContainer);
