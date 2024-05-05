@@ -141,8 +141,11 @@ public class BenchmarkEF
             double avgTime = _benchmarkUtils.CalculateAverage(tempTimes);
             double stdTime = _benchmarkUtils.CalculateStandardDeviationTime(tempTimes);
 
+            if (GeneratedQueries.Count > 10)
+                GeneratedQueries = GeneratedQueries[..9];
+
             benchmarkResultCases.Add(numberOfRecord,
-                new BenchmarkResultCase(avgTime, stdTime, GeneratedQueries!.Count, GeneratedQueries[..9]));
+                new BenchmarkResultCase(avgTime, stdTime, GeneratedQueries!.Count, GeneratedQueries));
 
             Console.WriteLine($" - {numberOfRecord}: avg={avgTime}; std={stdTime}");
         }

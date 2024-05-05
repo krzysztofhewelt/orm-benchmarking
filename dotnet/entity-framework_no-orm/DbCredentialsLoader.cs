@@ -9,8 +9,9 @@ public class DbCredentialsLoader
 
     public DbCredentials LoadDbCredentials()
     {
-        string path = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName, _filename);
-        
+//        string path = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName, _filename);
+        string path = Path.Combine(@"C:\xampp\htdocs\orm_benchmarking\dbCredentials.json");
+
         if (!File.Exists(path))
         {
             throw new FileNotFoundException("File does not exists");
