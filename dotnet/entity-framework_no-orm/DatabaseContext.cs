@@ -22,7 +22,7 @@ public class DatabaseContext : DbContext
             .UseMySql(
                 string.Format("server={0};port={1};database={2};user={3};password={4}", dbCredentials.host,
                     dbCredentials.port, dbCredentials.database, dbCredentials.username, dbCredentials.password),
-                new MariaDbServerVersion(new Version(10, 5, 13))
+                new MariaDbServerVersion(new Version(11, 3, 2))
             )
             .UseSnakeCaseNamingConvention()
             .LogTo(message =>

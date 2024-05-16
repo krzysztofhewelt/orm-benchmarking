@@ -1,11 +1,11 @@
 const chartOptions = {
-    yScaleTitle: 'Liczba rekordów',
-    xScaleTitle: 'Średni czas wykonywania [ms]'
+    yScaleTitle: 'Średni czas wykonania [ms]',
+    xScaleTitle: 'Liczba rekordów'
 }
 
 export function drawChart(data, chartTitle, element) {
     new Chart(element, {
-        type: "line",
+        type: "bar",
         data: data,
         options: {
             interaction: {

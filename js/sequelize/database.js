@@ -11,6 +11,13 @@ const getQueries = (queries) => {
     lastBenchmarkQueries.push(cleanedQuery);
 };
 
+module.exports.database = new Sequelize(dbCredentials.database, dbCredentials.username, dbCredentials.password, {
+    dialect: driver,
+    host: dbCredentials.host,
+    port: dbCredentials.port,
+    logging: getQueries
+});
+
 const clearQueriesHistory = () => {
     lastBenchmarkQueries = [];
 };
@@ -22,13 +29,6 @@ const getQueriesHistory = () => {
 const countQueriesHistory = () => {
     return lastBenchmarkQueries.length;
 };
-
-module.exports.database = new Sequelize(dbCredentials.database, dbCredentials.username, dbCredentials.password, {
-    dialect: driver,
-    host: dbCredentials.host,
-    port: dbCredentials.port,
-    logging: getQueries
-});
 
 module.exports.getBenchmarkQueries = getQueriesHistory;
 module.exports.countBenchmarkQueries = countQueriesHistory;
