@@ -9,11 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * User
- *
- * @mixin Builder
- */
 class User extends Model
 {
 	public $timestamps = false;
@@ -30,7 +25,7 @@ class User extends Model
 	public function student() : HasMany
 	{
 		return $this->hasMany(Student::class, 'user_id', 'id');
-	}
+	}w
 
 	public function teacher() : HasOne
 	{

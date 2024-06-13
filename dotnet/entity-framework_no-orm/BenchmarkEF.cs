@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -179,9 +180,10 @@ public class BenchmarkEF
         );
         
         HttpClient httpClient = new HttpClient();
+        string saveResultsEndpoint = ConfigurationManager.AppSettings.Get("SaveResultsEndpoint")!;
 
         using HttpResponseMessage response = await httpClient.PostAsync(
-            $"http://localhost/orm_benchmarking/index.php?save-results",
+            saveResultsEndpoint,
             new StringContent(jsonData, Encoding.UTF8, "application/json")
         );
 

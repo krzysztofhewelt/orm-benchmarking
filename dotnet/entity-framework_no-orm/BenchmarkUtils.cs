@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text;
+using System.Configuration;
 using dotnet_entity_framework.Entities;
 using Newtonsoft.Json;
 
@@ -9,6 +9,7 @@ public class BenchmarkUtils
 {
     private List<Course>? _generatedCourses;
     private List<User>? _generatedUsers;
+    private readonly string _workingDirectory = ConfigurationManager.AppSettings.Get("WorkingDirectory")!;
 
     public BenchmarkUtils()
     {
@@ -18,7 +19,9 @@ public class BenchmarkUtils
 
     private void LoadCourses()
     {
-        using (StreamReader r = new StreamReader(@"C:\xampp\htdocs\orm_benchmarking\courses.json"))
+        string coursesFilePath = Path.Combine(_workingDirectory!, "courses.json");
+        
+        using (StreamReader r = new StreamReader(coursesFilePath))
         {
             string json = r.ReadToEnd();
             _generatedCourses = JsonConvert.DeserializeObject<List<Course>>(json);
@@ -27,7 +30,9 @@ public class BenchmarkUtils
 
     private void LoadUsers()
     {
-        using (StreamReader r = new StreamReader(@"C:\xampp\htdocs\orm_benchmarking\users.json"))
+        string usersFilePath = Path.Combine(_workingDirectory, "users.json");
+        
+        using (StreamReader r = new StreamReader(usersFilePath))
         {
             string json = r.ReadToEnd();
             _generatedUsers = JsonConvert.DeserializeObject<List<User>>(json);
@@ -76,7 +81,7 @@ public class BenchmarkUtils
         ProcessStartInfo psi = new ProcessStartInfo
         {
             FileName = "php",
-            WorkingDirectory = "C:\\xampp\\htdocs\\orm_benchmarking",
+            WorkingDirectory = _workingDirectory,
             Arguments = @"databaseRestore.php",
             RedirectStandardOutput = true,
             UseShellExecute = false,

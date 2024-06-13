@@ -1,9 +1,11 @@
 const chartOptions = {
-    yScaleTitle: 'Średni czas wykonania [ms]',
-    xScaleTitle: 'Liczba rekordów'
+    yScaleTitle: 'Average time executing [ms]',
+    xScaleTitle: 'Number of records'
 }
 
 export function drawChart(data, chartTitle, element) {
+    Chart.register(ChartDataLabels);
+
     new Chart(element, {
         type: "bar",
         data: data,
@@ -49,6 +51,17 @@ export function drawChart(data, chartTitle, element) {
                         size: 24,
                         weight: 'bold'
                     }
+                },
+                datalabels: {
+                    anchor: 'end', // remove this line to get label in middle of the bar
+                    align: 'end',
+                    formatter: (val) => Number(val.toFixed(2)).toLocaleString('pl-PL'),
+                    labels: {
+                        value: {
+                            color: 'black'
+                        }
+                    }
+
                 }
             }
         }
