@@ -1,7 +1,18 @@
-# ORM Benchmarking
-An fully automotive advanced ORM benchmark. Easily expandable with new ORM's.
+<h1 align="center">
+ORM Benchmarking
+</h1>
 
-# Tested ORM's
+A fully automotive advanced ORM benchmark. Easily expandable with new ORM's.
+
+# Features
+* Test ORM in CRUD performance 
+* Fully parametrized (number of records, number of repeats, data size)
+* Easy to expand with new ORM's, languages and benchmark cases
+* Provides simple report page that shows results on interactive charts
+* Automatically generates database and fills it with random data
+* Easy to run - just run one bash file
+
+# Tested ORMs
 * C# (.NET):
   * Entity Framework Core v8.0.4
   * raw SQL
@@ -11,6 +22,17 @@ An fully automotive advanced ORM benchmark. Easily expandable with new ORM's.
 * JavaScript:
   * Sequelize v6.37.2
   * raw SQL
+
+# Methodology
+The goal of the benchmark is research the executing speed of several CRUD operations. The benchmark cases allow performance testing for simple as well as complex queries. The process of creating database, data and benchmarking is fully automatized.
+
+The research hypothesis:
+<cite>ORM tools in different programming languages differ in both functionality and performance. ORM tools in compiled languages (such as Java or C#) tending to achieve better performance in database operations than ORM tools in interpreted languages (such as PHP or JavaScript), at the cost of greater configuration complexity and less flexibility.</cite>
+
+1. Create database structure (migration)
+2. Generate random data (users and courses) and fill database with this data
+3. Run ORM benchmark
+   * If 
 
 # Database
 We are simulating an LMS (Learning Management System). There are simplified database based on [Learnin](https://github.com/krzysztofhewelt/learnin), my LMS implementation.
@@ -48,6 +70,8 @@ Each ORM have the same entities:
    * Q8. Delete n courses
 
 # Results
+For more information open ``report.html``.
+
 Benchmark parameters:
 * Number of repeats: 100
 * Number of records tested: 1, 50, 100, 500, 1000
@@ -650,13 +674,25 @@ DELETE FROM `course_enrollments` WHERE `course_id` = @p2 AND `user_id` = @p3 RET
 
 
 ## Overall ORM performance
+![overall_results_1.png](screenshots/results/overall_results_1.png)
+![overall_results_2.png](screenshots/results/overall_results_2.png)
+![overall_results_3.png](screenshots/results/overall_results_3.png)
+![overall_results_4.png](screenshots/results/overall_results_4.png)
 
-
-
-# Analysis
-_not done yet..._
 
 # Benchmark report
+The pictures below shows benchmark report structure (``report.html``). Charts are drawn automatically from the data in the file ``results.json``.
+
+Benchmark report shows information about:
+* last benchmark date
+* tested ORM's
+* test environment (you can change it in ``testEnv.json``)
+* number of repeats
+* number of records
+* benchmark cases (two charts: ORM and no-ORM's)
+* generated queries by ORM's (for 1000 records case)
+* overall ORM's performance (grouped select,update,insert,delete cases)
+
 ![report1.png](screenshots/report1.png)
 ![report2.png](screenshots/report2.png)
 ![report3.png](screenshots/report3.png)
@@ -664,6 +700,7 @@ _not done yet..._
 ![report5.png](screenshots/report5.png)
 
 # Benchmarking class/file pseudocode
+The benchmark class/file is similar for each ORM's and no-ORM (it differs language syntax). The structure of benchmark procedure is showed below.
 ```
 class Benchmark
   numberOfRepeats <- 100
@@ -732,8 +769,11 @@ class Benchmark
 end class
 ```
 
-# How to run benchmarks
+# How to run benchmark
 1. Clone this repo
+    ```
+    git clone https://github.com/krzysztofhewelt/orm-benchmarking.git
+    ```
 2. Install PHP 8.2 and newest version of Composer. Required to run Eloquent and create database.
 3. Install Node.js (at least 20.14.0). Required to run Sequelize.
 4. Install .NET SDK 8.0: https://dotnet.microsoft.com/en-us/download. Required to run Entity Framework.
