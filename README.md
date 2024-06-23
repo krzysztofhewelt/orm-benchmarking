@@ -29,11 +29,6 @@ The goal of the benchmark is research the executing speed of several CRUD operat
 The research hypothesis:
 <cite>ORM tools in different programming languages differ in both functionality and performance. ORM tools in compiled languages (such as Java or C#) tending to achieve better performance in database operations than ORM tools in interpreted languages (such as PHP or JavaScript), at the cost of greater configuration complexity and less flexibility.</cite>
 
-1. Create database structure (migration)
-2. Generate random data (users and courses) and fill database with this data
-3. Run ORM benchmark
-   * If 
-
 # Database
 We are simulating an LMS (Learning Management System). There are simplified database based on [Learnin](https://github.com/krzysztofhewelt/learnin), my LMS implementation.
 The database consists of 10k users (9500 students and 500 teachers), 500 courses and over 3000 tasks. Data is randomly generated.
