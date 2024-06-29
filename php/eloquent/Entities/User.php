@@ -25,7 +25,7 @@ class User extends Model
 	public function student() : HasMany
 	{
 		return $this->hasMany(Student::class, 'user_id', 'id');
-	}w
+	}
 
 	public function teacher() : HasOne
 	{
