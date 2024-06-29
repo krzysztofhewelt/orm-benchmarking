@@ -27,8 +27,7 @@ A fully automotive advanced ORM benchmark. Easily expandable with new ORM's.
 The goal of the benchmark is research the executing speed of several CRUD operations. The benchmark cases allow performance testing for simple as well as complex queries. The process of creating database, data and benchmarking is fully automatized.
 
 The research hypothesis:
-
-<cite>ORM tools in different programming languages differ in both functionality and performance. ORM tools in compiled languages (such as Java or C#) tending to achieve better performance in database operations than ORM tools in interpreted languages (such as PHP or JavaScript), at the cost of greater configuration complexity and less flexibility.</cite>
+_ORM tools in different programming languages differ in both functionality and performance. ORM tools in compiled languages (such as Java or C#) tending to achieve better performance in database operations than ORM tools in interpreted languages (such as PHP or JavaScript), at the cost of greater configuration complexity and less flexibility._
 
 1. Create database structure (migration)
 2. Generate random data (users and courses) and fill database with this data
