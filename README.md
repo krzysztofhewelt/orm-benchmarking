@@ -31,8 +31,14 @@ The research hypothesis:
 
 1. Create database structure (migration)
 2. Generate random data (users and courses) and fill database with this data
-3. Run ORM benchmark
-   * If 
+3. Run benchmark for each ORM
+   * Make database backup
+   * Run each test scenario sequentially 100 times
+   * If we're modifying records in database (INSERT, UPDATE, DELETE) after iteration restore database from backup and perform next iteration
+   * After performed scenario calculate average time and standard deviation of results
+   * After performed all scenarios, send results to endpoint ``/save-results`` to save the results
+   * Repeat 3. step for each ORM and no-ORM tests
+4. You can view benchmark results in report.html file
 
 # Database
 We are simulating an LMS (Learning Management System). There are simplified database based on [Learnin](https://github.com/krzysztofhewelt/learnin), my LMS implementation.
@@ -769,8 +775,16 @@ class Benchmark
 end class
 ```
 
+# Requirements
+* PHP 8.2+
+* Composer 2.7.1+
+* .NET SDK 8
+* Node.js 20.14.0+ with installed NPM
+* MariaDB 11.3.2+
+* HTTP Server ex. Apache, NGINX
+
 # How to run benchmark
-1. Clone this repo
+1. Clone this repo and copy files to your HTTP server ex. /var/www/html, C:\xampp\htdocs
     ```
     git clone https://github.com/krzysztofhewelt/orm-benchmarking.git
     ```
